@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Мой Портфель</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-color: var(--tg-theme-bg-color, #0f172a);
+      color: var(--tg-theme-text-color, #f8fafc);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .card { background-color: var(--tg-theme-secondary-bg-color, #1e293b); }
+  </style>
+</head>
+<body class="pb-24">
+  <div class="p-4 max-w-md mx-auto space-y-4">
+
+    <div class="flex justify-between items-center">
+      <h1 class="text-lg font-black tracking-tight text-white">💼 Мой Портфель</h1>
+      <button onclick="loadData()" class="p-2 rounded-xl bg-slate-800 text-slate-300 active:scale-95 text-xs">
+        <span id="refresh-icon">🔄</span> Обновить
+      </button>
+    </div>
+
+    <!-- Вкладка: Сводка -->
+    <div id="tab-summary" class="space-y-3">
+      <div class="card p-4 rounded-2xl border border-slate-800 shadow">
+        <span class="text-xs text-slate-400 font-semibold uppercase">Всего на счетах</span>
+        <div id="val-worth" class="text-3xl font-black mt-1 text-white">0.00 ₽</div>
+        <div class="flex items-center gap-2 mt-2">
+          <span id="val-income" class="text-sm font-bold text-emerald-400">+0.00 ₽</span>
+          <span id="val-yield" class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold">+0.0%</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2">
+        <div class="card p-3 rounded-xl border border-slate-800">
+          <span class="text-xs text-slate-400">Вложено</span>
+          <div id="val-invested" class="text-sm font-bold mt-1 text-white">0.00 ₽</div>
+        </div>
+        <div class="card p-3 rounded-xl border border-slate-800">
+          <span class="text-xs text-slate-400">Доход</span>
+          <div id="val-profit" class="text-sm font-bold text-emerald-400 mt-1">0.00 ₽</div>
+        </div>
+      </div>
+
+      <div class="card p-4 rounded-xl border border-slate-800 space-y-2">
+        <span class="text-xs font-bold text-slate-400 uppercase">Структура</span>
+        <div class="flex justify-between text-xs">
+          <span>📈 Акции</span>
+          <span id="val-stocks-inv">0.00 ₽</span>
+        </div>
+        <div class="flex justify-between text-xs">
+          <span>💼 Облигации</span>
+          <span id="val-bonds-inv">0.00 ₽</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Вкладка: Акции -->
+    <div id="tab-stocks" class="hidden space-y-2">
+      <h2 class="font-bold text-sm text-slate-300">Акции в портфеле</h2>
+      <div id="stocks-list" class="space-y-2"></div>
+    </div>
+
+    <!-- Вкладка: Облигации -->
+    <div id="tab-bonds" class="hidden space-y-2">
+      <h2 class="font-bold text-sm text-slate-300">Облигации в портфеле</h2>
+      <div id="bonds-list" class="space-y-2"></div>
+    </div>
+
+  </div>
+
+  <!-- Нижняя панель переключения вкладок -->
+  <nav class="fixed bottom-0 left-0 right-0 card border-t border-slate-800 px-3 py-2 flex justify-around text-xs z-50">
+    <button onclick="setTab('summary')" id="b-summary" class="flex flex-col items-center text-blue-400">
+      <span>📊</span><span>Сводка</span>
+    </button>
+    <button onclick="setTab('stocks')" id="b-stocks" class="flex flex-col items-center text-slate-400">
+      <span>📈</span><span>Акции</span>
+    </button>
+    <button onclick="setTab('bonds')" id="b-bonds" class="flex flex-col items-center text-slate-400">
+      <span>💼</span><span>Облигации</span>
+    </button>
+  </nav>
+
+  <script>
+    // ВСТАВЬТЕ СЮДА ВАШ URL РАЗВЕРТЫВАНИЯ:
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwcvhsjeidMICS9pYLVjINAXGNCqQGi3Qu7IVL_SpxNjgMCR6p2xdCvDguSTaJEwb5x/exec";
+
+    const tg = window.Telegram?.WebApp;
+    if (tg) { tg.ready(); tg.expand(); }
+
+    function setTab(name) {
+      ['summary', 'stocks', 'bonds'].forEach(t => {
+        document.getElementById('tab-' + t).classList.toggle('hidden', t !== name);
+        const btn = document.getElementById('b-' + t);
+        if (t === name) {
+          btn.className = "flex flex-col items-center text-blue-400";
+        } else {
+          btn.className = "flex flex-col items-center text-slate-400";
+        }
+      });
+    }
+
+    async function loadData() {
+      const icon = document.getElementById('refresh-icon');
+      icon.classList.add('animate-spin');
+
+      try {
+        const res = await fetch(`${SCRIPT_URL}?t=${Date.now()}`);
+        const data = await res.json();
+        const s = data.summary;
+
+        // Сводка
+        document.getElementById('val-worth').innerText = Number(s.totalWorth).toLocaleString('ru-RU', {minimumFractionDigits: 2}) + ' ₽';
+        document.getElementById('val-invested').innerText = Number(s.invested).toLocaleString('ru-RU', {minimumFractionDigits: 2}) + ' ₽';
+        document.getElementById('val-income').innerText = (s.income >= 0 ? '+' : '') + Number(s.income).toLocaleString('ru-RU', {minimumFractionDigits: 2}) + ' ₽';
+        document.getElementById('val-profit').innerText = Number(s.income).toLocaleString('ru-RU', {minimumFractionDigits: 2}) + ' ₽';
+        document.getElementById('val-yield').innerText = (s.totalYield >= 0 ? '+' : '') + Number(s.totalYield).toFixed(2) + '%';
+        document.getElementById('val-stocks-inv').innerText = Number(s.stocksInv).toLocaleString('ru-RU') + ' ₽';
+        document.getElementById('val-bonds-inv').innerText = Number(s.bondsInv).toLocaleString('ru-RU') + ' ₽';
+
+        // Акции
+        const sl = document.getElementById('stocks-list');
+        sl.innerHTML = data.stocks.length ? '' : '<div class="text-xs text-slate-500 text-center py-6">Акции не внесены</div>';
+        data.stocks.forEach(st => {
+          sl.innerHTML += `
+            <div class="card p-3 rounded-xl border border-slate-800 flex justify-between items-center">
+              <div>
+                <div class="font-bold text-sm text-white">${st.ticker}</div>
+                <div class="text-xs text-slate-400">${st.quantity} шт. × ${st.buyPrice} ₽</div>
+              </div>
+              <div class="text-right">
+                <div class="font-bold text-sm text-white">${st.curCost.toLocaleString()} ₽</div>
+                <div class="text-xs ${st.pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}">
+                  ${st.pnl >= 0 ? '+' : ''}${st.pnl.toFixed(1)} ₽ (${st.pnlPct.toFixed(1)}%)
+                </div>
+              </div>
+            </div>`;
+        });
+
+        // Облигации
+        const bl = document.getElementById('bonds-list');
+        bl.innerHTML = data.bonds.length ? '' : '<div class="text-xs text-slate-500 text-center py-6">Облигации не внесены</div>';
+        data.bonds.forEach(bd => {
+          bl.innerHTML += `
+            <div class="card p-3 rounded-xl border border-slate-800 flex justify-between items-center">
+              <div>
+                <div class="font-bold text-sm text-white">${bd.name}</div>
+                <div class="text-xs text-slate-400">${bd.quantity} шт. | Купон: ${bd.coupon} ₽</div>
+              </div>
+              <div class="text-right">
+                <div class="font-bold text-sm text-white">${bd.totalSpent.toLocaleString()} ₽</div>
+                <div class="text-xs text-amber-400">${bd.yieldNet.toFixed(1)}% год.</div>
+              </div>
+            </div>`;
+        });
+
+      } catch (e) {
+        console.error("Ошибка загрузки:", e);
+      } finally {
+        icon.classList.remove('animate-spin');
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', loadData);
+  </script>
+</body>
+</html>
