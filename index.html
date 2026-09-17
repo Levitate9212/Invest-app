@@ -8,162 +8,338 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
-      background-color: var(--tg-theme-bg-color, #0f172a);
-      color: var(--tg-theme-text-color, #f8fafc);
+      background-color: var(--tg-theme-bg-color, #f1f5f9);
+      color: var(--tg-theme-text-color, #0f172a);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
-    .card { background-color: var(--tg-theme-secondary-bg-color, #1e293b); }
+    .card {
+      background-color: var(--tg-theme-secondary-bg-color, #ffffff);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+    }
+    .input-box {
+      background-color: var(--tg-theme-bg-color, #f8fafc);
+      border: 1px solid rgba(0, 0, 0, 0.15);
+      color: inherit;
+    }
   </style>
 </head>
-<body class="pb-24">
+<body class="pb-24 select-none">
   <div class="p-4 max-w-md mx-auto space-y-4">
 
+    <!-- Заголовок -->
     <div class="flex justify-between items-center">
-      <h1 class="text-lg font-black tracking-tight text-white">💼 Мой Портфель</h1>
-      <button onclick="loadData()" class="p-2 rounded-xl bg-slate-800 text-slate-300 active:scale-95 text-xs">
+      <div class="flex items-center gap-2">
+        <span class="text-2xl">💼</span>
+        <h1 class="text-lg font-black tracking-tight">Мой Портфель</h1>
+      </div>
+      <button onclick="loadData()" class="px-3 py-1.5 rounded-xl card font-bold text-xs flex items-center gap-1 active:scale-95 shadow-sm">
         <span id="refresh-icon">🔄</span> Обновить
       </button>
     </div>
 
-    <!-- Вкладка: Сводка -->
-    <div id="tab-summary" class="space-y-3">
-      <div class="card p-4 rounded-2xl border border-slate-800 shadow">
-        <span class="text-xs text-slate-400 font-semibold uppercase">Всего на счетах</span>
-        <div id="val-worth" class="text-3xl font-black mt-1 text-white">0.00 ₽</div>
+    <!-- Вкладка 1: СВОДКА -->
+    <div id="tab-summary" class="tab-view space-y-3">
+      <div class="card p-4 rounded-2xl shadow-sm">
+        <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">Всего на счетах</span>
+        <div id="val-worth" class="text-3xl font-black mt-1 text-slate-900 dark:text-white">0,00 ₽</div>
         <div class="flex items-center gap-2 mt-2">
-          <span id="val-income" class="text-sm font-bold text-emerald-400">+0.00 ₽</span>
-          <span id="val-yield" class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold">+0.0%</span>
+          <span id="val-income" class="text-sm font-extrabold text-emerald-600">+0,00 ₽</span>
+          <span id="val-yield" class="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-bold">+0.00%</span>
         </div>
       </div>
 
       <div class="grid grid-cols-2 gap-2">
-        <div class="card p-3 rounded-xl border border-slate-800">
-          <span class="text-xs text-slate-400">Вложено</span>
-          <div id="val-invested" class="text-sm font-bold mt-1 text-white">0.00 ₽</div>
+        <div class="card p-3 rounded-xl shadow-sm">
+          <span class="text-xs text-slate-400 font-bold uppercase">Вложено</span>
+          <div id="val-invested" class="text-base font-black mt-1 text-slate-900 dark:text-white">0,00 ₽</div>
         </div>
-        <div class="card p-3 rounded-xl border border-slate-800">
-          <span class="text-xs text-slate-400">Доход</span>
-          <div id="val-profit" class="text-sm font-bold text-emerald-400 mt-1">0.00 ₽</div>
+        <div class="card p-3 rounded-xl shadow-sm">
+          <span class="text-xs text-slate-400 font-bold uppercase">Доход</span>
+          <div id="val-profit" class="text-base font-black mt-1 text-emerald-600">0,00 ₽</div>
         </div>
       </div>
 
-      <div class="card p-4 rounded-xl border border-slate-800 space-y-2">
-        <span class="text-xs font-bold text-slate-400 uppercase">Структура</span>
-        <div class="flex justify-between text-xs">
-          <span>📈 Акции</span>
-          <span id="val-stocks-inv">0.00 ₽</span>
+      <div class="card p-4 rounded-xl shadow-sm space-y-3">
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-wide">Структура портфеля</span>
+        <div>
+          <div class="flex justify-between text-xs font-semibold mb-1">
+            <span>📈 Акции</span>
+            <span id="val-stocks-inv" class="text-blue-600">0 ₽</span>
+          </div>
         </div>
-        <div class="flex justify-between text-xs">
-          <span>💼 Облигации</span>
-          <span id="val-bonds-inv">0.00 ₽</span>
+        <div>
+          <div class="flex justify-between text-xs font-semibold mb-1">
+            <span>💼 Облигации</span>
+            <span id="val-bonds-inv" class="text-amber-600">0 ₽</span>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Вкладка: Акции -->
-    <div id="tab-stocks" class="hidden space-y-2">
-      <h2 class="font-bold text-sm text-slate-300">Акции в портфеле</h2>
+    <!-- Вкладка 2: АКЦИИ -->
+    <div id="tab-stocks" class="tab-view hidden space-y-2">
+      <div class="flex justify-between items-center px-1">
+        <h2 class="font-bold text-sm text-slate-500 uppercase">Акции в портфеле</h2>
+      </div>
       <div id="stocks-list" class="space-y-2"></div>
     </div>
 
-    <!-- Вкладка: Облигации -->
-    <div id="tab-bonds" class="hidden space-y-2">
-      <h2 class="font-bold text-sm text-slate-300">Облигации в портфеле</h2>
+    <!-- Вкладка 3: ОБЛИГАЦИИ -->
+    <div id="tab-bonds" class="tab-view hidden space-y-2">
+      <div class="flex justify-between items-center px-1">
+        <h2 class="font-bold text-sm text-slate-500 uppercase">Облигации в портфеле</h2>
+      </div>
       <div id="bonds-list" class="space-y-2"></div>
+    </div>
+
+    <!-- Вкладка 4: ДОБАВИТЬ СДЕЛКУ -->
+    <div id="tab-add" class="tab-view hidden card p-4 rounded-2xl shadow-sm space-y-3">
+      <h2 class="font-black text-base">Добавить сделку</h2>
+      
+      <!-- Переключатель: Акция или Облигация -->
+      <div class="flex gap-2 p-1 bg-slate-200/60 dark:bg-slate-800 rounded-xl">
+        <button onclick="setAddType('stock')" id="btn-add-stock" class="flex-1 py-1.5 rounded-lg bg-blue-600 text-white font-bold text-xs shadow">Акция</button>
+        <button onclick="setAddType('bond')" id="btn-add-bond" class="flex-1 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 font-bold text-xs">Облигация</button>
+      </div>
+
+      <!-- Поля для Акции -->
+      <div id="form-stock" class="space-y-2">
+        <div>
+          <label class="text-[11px] font-bold text-slate-400">Тикер акции</label>
+          <input id="in-stock-ticker" placeholder="например SBER или LKOH" class="w-full p-2.5 rounded-xl input-box text-sm font-semibold mt-1">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-[11px] font-bold text-slate-400">Количество (шт.)</label>
+            <input id="in-stock-qty" type="number" placeholder="10" class="w-full p-2.5 rounded-xl input-box text-sm font-semibold mt-1">
+          </div>
+          <div>
+            <label class="text-[11px] font-bold text-slate-400">Цена покупки (₽)</label>
+            <input id="in-stock-price" type="number" step="0.01" placeholder="280.50" class="w-full p-2.5 rounded-xl input-box text-sm font-semibold mt-1">
+          </div>
+        </div>
+      </div>
+
+      <!-- Поля для Облигации -->
+      <div id="form-bond" class="space-y-2 hidden">
+        <div>
+          <label class="text-[11px] font-bold text-slate-400">Название / Выпуск</label>
+          <input id="in-bond-name" placeholder="ОФЗ 26238" class="w-full p-2.5 rounded-xl input-box text-sm font-semibold mt-1">
+        </div>
+        <div>
+          <label class="text-[11px] font-bold text-slate-400">Дата погашения</label>
+          <input id="in-bond-date" type="date" class="w-full p-2.5 rounded-xl input-box text-sm font-semibold mt-1">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-[11px] font-bold text-slate-400">Количество (шт.)</label>
+            <input id="in-bond-qty" type="number" placeholder="5" class="w-full p-2.5 rounded-xl input-box text-sm font-semibold mt-1">
+          </div>
+          <div>
+            <label class="text-[11px] font-bold text-slate-400">Цена покупки (₽)</label>
+            <input id="in-bond-price" type="number" step="0.01" placeholder="780.00" class="w-full p-2.5 rounded-xl input-box text-sm font-semibold mt-1">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-[11px] font-bold text-slate-400">Размер купона (₽)</label>
+            <input id="in-bond-coupon" type="number" step="0.01" placeholder="35.40" class="w-full p-2.5 rounded-xl input-box text-sm font-semibold mt-1">
+          </div>
+          <div>
+            <label class="text-[11px] font-bold text-slate-400">НКД при покупке (₽)</label>
+            <input id="in-bond-nkd" type="number" step="0.01" placeholder="0" value="0" class="w-full p-2.5 rounded-xl input-box text-sm font-semibold mt-1">
+          </div>
+        </div>
+      </div>
+
+      <button id="btn-save" onclick="saveTransaction()" class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-sm mt-2 transition active:scale-98">
+        Записать в таблицу
+      </button>
+      <div id="save-status" class="text-center text-xs hidden font-bold"></div>
     </div>
 
   </div>
 
-  <!-- Нижняя панель переключения вкладок -->
-  <nav class="fixed bottom-0 left-0 right-0 card border-t border-slate-800 px-3 py-2 flex justify-around text-xs z-50">
-    <button onclick="setTab('summary')" id="b-summary" class="flex flex-col items-center text-blue-400">
-      <span>📊</span><span>Сводка</span>
+  <!-- Навигация внизу -->
+  <nav class="fixed bottom-0 left-0 right-0 card border-t px-2 py-2 flex justify-around text-xs z-50">
+    <button onclick="setTab('summary')" id="b-summary" class="flex flex-col items-center text-blue-600 font-bold">
+      <span class="text-base">📊</span><span>Сводка</span>
     </button>
     <button onclick="setTab('stocks')" id="b-stocks" class="flex flex-col items-center text-slate-400">
-      <span>📈</span><span>Акции</span>
+      <span class="text-base">📈</span><span>Акции</span>
     </button>
     <button onclick="setTab('bonds')" id="b-bonds" class="flex flex-col items-center text-slate-400">
-      <span>💼</span><span>Облигации</span>
+      <span class="text-base">💼</span><span>Облигации</span>
+    </button>
+    <button onclick="setTab('add')" id="b-add" class="flex flex-col items-center text-slate-400">
+      <span class="text-base">➕</span><span>Добавить</span>
     </button>
   </nav>
 
   <script>
     // ВСТАВЬТЕ СЮДА ВАШ URL РАЗВЕРТЫВАНИЯ:
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwcvhsjeidMICS9pYLVjINAXGNCqQGi3Qu7IVL_SpxNjgMCR6p2xdCvDguSTaJEwb5x/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwcvhsjeidMICS9pYLVjINAXGNCqQGi3Qu7IVL_SpxNjgMCR6p2xdCvDguSTaJEwb5x/exec"; 
+    // Замените ссылку выше на свою ссылку из Apps Script!
 
     const tg = window.Telegram?.WebApp;
     if (tg) { tg.ready(); tg.expand(); }
 
+    let currentAddType = "stock";
+
     function setTab(name) {
-      ['summary', 'stocks', 'bonds'].forEach(t => {
-        document.getElementById('tab-' + t).classList.toggle('hidden', t !== name);
+      document.querySelectorAll('.tab-view').forEach(el => el.classList.add('hidden'));
+      document.getElementById('tab-' + name).classList.remove('hidden');
+
+      ['summary', 'stocks', 'bonds', 'add'].forEach(t => {
         const btn = document.getElementById('b-' + t);
         if (t === name) {
-          btn.className = "flex flex-col items-center text-blue-400";
+          btn.className = "flex flex-col items-center text-blue-600 font-bold";
         } else {
           btn.className = "flex flex-col items-center text-slate-400";
         }
       });
     }
 
+    function setAddType(type) {
+      currentAddType = type;
+      document.getElementById('form-stock').classList.toggle('hidden', type !== 'stock');
+      document.getElementById('form-bond').classList.toggle('hidden', type !== 'bond');
+
+      if (type === 'stock') {
+        document.getElementById('btn-add-stock').className = "flex-1 py-1.5 rounded-lg bg-blue-600 text-white font-bold text-xs shadow";
+        document.getElementById('btn-add-bond').className = "flex-1 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 font-bold text-xs";
+      } else {
+        document.getElementById('btn-add-bond').className = "flex-1 py-1.5 rounded-lg bg-blue-600 text-white font-bold text-xs shadow";
+        document.getElementById('btn-add-stock').className = "flex-1 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 font-bold text-xs";
+      }
+    }
+
     async function loadData() {
       const icon = document.getElementById('refresh-icon');
-      icon.classList.add('animate-spin');
+      if (icon) icon.classList.add('animate-spin');
 
       try {
         const res = await fetch(`${SCRIPT_URL}?t=${Date.now()}`);
         const data = await res.json();
         const s = data.summary;
 
-        // Сводка
+        // 1. Сводка
         document.getElementById('val-worth').innerText = Number(s.totalWorth).toLocaleString('ru-RU', {minimumFractionDigits: 2}) + ' ₽';
         document.getElementById('val-invested').innerText = Number(s.invested).toLocaleString('ru-RU', {minimumFractionDigits: 2}) + ' ₽';
         document.getElementById('val-income').innerText = (s.income >= 0 ? '+' : '') + Number(s.income).toLocaleString('ru-RU', {minimumFractionDigits: 2}) + ' ₽';
         document.getElementById('val-profit').innerText = Number(s.income).toLocaleString('ru-RU', {minimumFractionDigits: 2}) + ' ₽';
         document.getElementById('val-yield').innerText = (s.totalYield >= 0 ? '+' : '') + Number(s.totalYield).toFixed(2) + '%';
-        document.getElementById('val-stocks-inv').innerText = Number(s.stocksInv).toLocaleString('ru-RU') + ' ₽';
-        document.getElementById('val-bonds-inv').innerText = Number(s.bondsInv).toLocaleString('ru-RU') + ' ₽';
+        document.getElementById('val-stocks-inv').innerText = Number(s.stocksInv).toLocaleString('ru-RU', {minimumFractionDigits: 2}) + ' ₽';
+        document.getElementById('val-bonds-inv').innerText = Number(s.bondsInv).toLocaleString('ru-RU', {minimumFractionDigits: 2}) + ' ₽';
 
-        // Акции
+        // 2. Акции
         const sl = document.getElementById('stocks-list');
-        sl.innerHTML = data.stocks.length ? '' : '<div class="text-xs text-slate-500 text-center py-6">Акции не внесены</div>';
+        sl.innerHTML = data.stocks.length ? '' : '<div class="text-xs text-slate-400 text-center py-8">Акции пока не внесены</div>';
         data.stocks.forEach(st => {
           sl.innerHTML += `
-            <div class="card p-3 rounded-xl border border-slate-800 flex justify-between items-center">
+            <div class="card p-3.5 rounded-2xl shadow-sm flex justify-between items-center">
               <div>
-                <div class="font-bold text-sm text-white">${st.ticker}</div>
-                <div class="text-xs text-slate-400">${st.quantity} шт. × ${st.buyPrice} ₽</div>
+                <div class="font-extrabold text-sm text-slate-900 dark:text-white">${st.ticker}</div>
+                <div class="text-xs text-slate-400 font-medium">${st.quantity} шт. × ${st.buyPrice} ₽</div>
               </div>
               <div class="text-right">
-                <div class="font-bold text-sm text-white">${st.curCost.toLocaleString()} ₽</div>
-                <div class="text-xs ${st.pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}">
+                <div class="font-extrabold text-sm text-slate-900 dark:text-white">${st.curCost.toLocaleString('ru-RU')} ₽</div>
+                <div class="text-xs font-bold ${st.pnl >= 0 ? 'text-emerald-600' : 'text-rose-600'}">
                   ${st.pnl >= 0 ? '+' : ''}${st.pnl.toFixed(1)} ₽ (${st.pnlPct.toFixed(1)}%)
                 </div>
               </div>
             </div>`;
         });
 
-        // Облигации
+        // 3. Облигации
         const bl = document.getElementById('bonds-list');
-        bl.innerHTML = data.bonds.length ? '' : '<div class="text-xs text-slate-500 text-center py-6">Облигации не внесены</div>';
+        bl.innerHTML = data.bonds.length ? '' : '<div class="text-xs text-slate-400 text-center py-8">Облигации пока не внесены</div>';
         data.bonds.forEach(bd => {
           bl.innerHTML += `
-            <div class="card p-3 rounded-xl border border-slate-800 flex justify-between items-center">
+            <div class="card p-3.5 rounded-2xl shadow-sm flex justify-between items-center">
               <div>
-                <div class="font-bold text-sm text-white">${bd.name}</div>
-                <div class="text-xs text-slate-400">${bd.quantity} шт. | Купон: ${bd.coupon} ₽</div>
+                <div class="font-extrabold text-sm text-slate-900 dark:text-white">${bd.name}</div>
+                <div class="text-xs text-slate-400 font-medium">${bd.quantity} шт. | Купон: ${bd.coupon} ₽</div>
               </div>
               <div class="text-right">
-                <div class="font-bold text-sm text-white">${bd.totalSpent.toLocaleString()} ₽</div>
-                <div class="text-xs text-amber-400">${bd.yieldNet.toFixed(1)}% год.</div>
+                <div class="font-extrabold text-sm text-slate-900 dark:text-white">${bd.totalSpent.toLocaleString('ru-RU')} ₽</div>
+                <div class="text-xs text-amber-600 font-bold">${bd.yieldNet.toFixed(1)}% год. (с НДФЛ)</div>
               </div>
             </div>`;
         });
 
-      } catch (e) {
-        console.error("Ошибка загрузки:", e);
+      } catch (err) {
+        console.error(err);
       } finally {
-        icon.classList.remove('animate-spin');
+        if (icon) icon.classList.remove('animate-spin');
+      }
+    }
+
+    // Сохранение сделки в таблицу
+    async function saveTransaction() {
+      const btn = document.getElementById('btn-save');
+      const status = document.getElementById('save-status');
+
+      btn.disabled = true;
+      btn.innerText = "Сохранение...";
+      status.classList.remove('hidden');
+      status.innerText = "Запись в Google Таблицу...";
+      status.className = "text-center text-xs text-slate-400";
+
+      let payload = { type: currentAddType };
+
+      if (currentAddType === "stock") {
+        payload.ticker = document.getElementById('in-stock-ticker').value.trim();
+        payload.quantity = document.getElementById('in-stock-qty').value;
+        payload.price = document.getElementById('in-stock-price').value;
+        if (!payload.ticker || !payload.quantity || !payload.price) {
+          alert("Заполните все поля!");
+          btn.disabled = false;
+          btn.innerText = "Записать в таблицу";
+          status.classList.add('hidden');
+          return;
+        }
+      } else {
+        payload.name = document.getElementById('in-bond-name').value.trim();
+        payload.matDate = document.getElementById('in-bond-date').value;
+        payload.quantity = document.getElementById('in-bond-qty').value;
+        payload.price = document.getElementById('in-bond-price').value;
+        payload.coupon = document.getElementById('in-bond-coupon').value;
+        payload.nkd = document.getElementById('in-bond-nkd').value || 0;
+        if (!payload.name || !payload.quantity || !payload.price) {
+          alert("Заполните основные поля облигации!");
+          btn.disabled = false;
+          btn.innerText = "Записать в таблицу";
+          status.classList.add('hidden');
+          return;
+        }
+      }
+
+      try {
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+
+        if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred("success");
+        status.innerText = "✅ Записано в Google Таблицу!";
+        status.className = "text-center text-xs text-emerald-600 font-bold";
+
+        setTimeout(() => {
+          setTab('summary');
+          loadData();
+          btn.disabled = false;
+          btn.innerText = "Записать в таблицу";
+          status.classList.add('hidden');
+        }, 1500);
+
+      } catch (err) {
+        status.innerText = "❌ Ошибка отправки";
+        status.className = "text-center text-xs text-rose-600 font-bold";
+        btn.disabled = false;
+        btn.innerText = "Записать в таблицу";
       }
     }
 
