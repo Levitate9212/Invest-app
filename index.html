@@ -82,11 +82,11 @@
       </button>
     </div>
 
-    <!-- ================= ВКЛАДКА 1: СВОДКА ================= -->
+    <!-- ================= ЭКРАН А: СВОДКА (РАБОЧИЙ КАПИТАЛ) ================= -->
     <div id="tab-summary" class="tab-view space-y-3.5">
       <div class="glass-card p-5 rounded-3xl relative overflow-hidden shadow-2xl">
         <div class="absolute -right-8 -top-8 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl pointer-events-none"></div>
-        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Всего на счетах</span>
+        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Всего на счетах (капитал)</span>
         <div id="val-worth" class="text-3xl font-black mt-1 text-white tracking-tight">0,00 ₽</div>
         
         <div class="flex items-center gap-2 mt-2.5">
@@ -102,14 +102,39 @@
         </div>
       </div>
 
+      <!-- Вложено и Прибыль -->
       <div class="grid grid-cols-2 gap-2.5">
         <div class="glass-card p-3.5 rounded-2xl">
           <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Вложено</div>
           <div id="val-invested" class="text-base font-extrabold mt-1 text-white">0,00 ₽</div>
         </div>
         <div class="glass-card p-3.5 rounded-2xl">
-          <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Чистый доход</div>
+          <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Прибыль / убыток</div>
           <div id="val-profit" class="text-base font-extrabold mt-1 text-emerald-400">0,00 ₽</div>
+        </div>
+      </div>
+
+      <!-- ИНТЕРАКТИВНАЯ ПЛАШКА: НАЛОГОВЫЙ РЕЗЕРВ (переход на Экран Б) -->
+      <div onclick="setTab('taxes')" class="glass-card p-3.5 rounded-2xl border border-indigo-500/30 bg-gradient-to-r from-indigo-950/40 via-slate-900/60 to-slate-900/80 flex items-center justify-between cursor-pointer active:scale-98 transition shadow-lg group">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-sm shadow-sm">
+            🏛️
+          </div>
+          <div>
+            <div class="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
+              <span>Отложенный налог:</span>
+              <span id="card-tax-due" class="text-rose-400 font-extrabold">-0,00 ₽</span>
+            </div>
+            <div class="text-[10px] text-slate-400">
+              К выводу на карту: <span id="card-net-withdraw" class="text-white font-bold">0,00 ₽</span>
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center gap-1 text-xs font-bold text-indigo-400 group-hover:translate-x-0.5 transition">
+          <span>Аудит</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+          </svg>
         </div>
       </div>
 
@@ -166,12 +191,12 @@
             <span class="text-sm">💰</span>
             <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Пассивный доход</span>
           </div>
-          <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-bold">с учетом НДФЛ</span>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-sky-500/15 text-sky-400 font-bold border border-sky-500/20">реинвест 100%</span>
         </div>
 
         <div class="grid grid-cols-2 gap-2 bg-slate-900/60 p-3 rounded-2xl border border-white/5">
           <div>
-            <div class="text-[10px] text-slate-400 font-medium">В год чистыми</div>
+            <div class="text-[10px] text-slate-400 font-medium">В год купонами</div>
             <div id="val-passive-year" class="text-sm font-black text-emerald-400 mt-0.5">+0,00 ₽</div>
           </div>
           <div>
@@ -187,7 +212,90 @@
       </div>
     </div>
 
-    <!-- ================= ВКЛАДКА 2: АКЦИИ ================= -->
+    <!-- ================= ЭКРАН Б: НАЛОГИ И АУДИТ ================= -->
+    <div id="tab-taxes" class="tab-view hidden space-y-3.5">
+      
+      <!-- Главная карточка: К выводу на карту -->
+      <div class="glass-card p-5 rounded-3xl relative overflow-hidden shadow-2xl border border-indigo-500/20">
+        <div class="absolute -right-8 -top-8 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none"></div>
+        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Чистыми к выводу прямо сейчас</span>
+        <div id="tax-val-net" class="text-3xl font-black mt-1 text-emerald-400 tracking-tight">0,00 ₽</div>
+
+        <div class="mt-2.5 flex items-center justify-between text-xs pt-1 border-t border-white/5">
+          <div class="text-slate-400">Накопленный налог:</div>
+          <div id="tax-val-total" class="font-extrabold text-rose-400">-0,00 ₽</div>
+        </div>
+        <div class="text-[10px] text-slate-500 mt-1">
+          * Брокер удержит налог при выводе на банковскую карту или автоматически в январе следующего года.
+        </div>
+      </div>
+
+      <!-- Секция 1: Купоны ОФЗ (Отложенный налог) -->
+      <div class="glass-card p-4 rounded-3xl space-y-3 shadow-xl">
+        <div class="flex justify-between items-center">
+          <div class="flex items-center gap-1.5">
+            <span class="text-sm">🏛️</span>
+            <span class="text-[11px] font-bold text-slate-300 uppercase tracking-wider">Купоны ОФЗ (Отложенный 13%)</span>
+          </div>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-300 font-bold">Январь / Вывод</span>
+        </div>
+
+        <div class="bg-slate-900/60 p-3 rounded-2xl border border-white/5 space-y-1.5 text-xs">
+          <div class="flex justify-between">
+            <span class="text-slate-400">Годовой купонный поток (100%):</span>
+            <span id="tax-bonds-gross" class="font-bold text-white">0,00 ₽</span>
+          </div>
+          <div class="flex justify-between text-rose-400">
+            <span>Налог 13% к списанию:</span>
+            <span id="tax-bonds-due" class="font-extrabold">-0,00 ₽</span>
+          </div>
+        </div>
+        <p class="text-[10px] text-slate-400 leading-relaxed">
+          Все 100% купонов зачисляются брокером без задержек и работают в реинвестировании внутри года. Налог спишется только в январе.
+        </p>
+      </div>
+
+      <!-- Секция 2: Акции и сальдирование убытков -->
+      <div class="glass-card p-4 rounded-3xl space-y-3 shadow-xl">
+        <div class="flex justify-between items-center">
+          <div class="flex items-center gap-1.5">
+            <span class="text-sm">⚖️</span>
+            <span class="text-[11px] font-bold text-slate-300 uppercase tracking-wider">Курсовой рост и сальдирование</span>
+          </div>
+          <span id="tax-stocks-badge" class="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-bold">0 ₽ налога</span>
+        </div>
+
+        <div class="bg-slate-900/60 p-3 rounded-2xl border border-white/5 space-y-1.5 text-xs">
+          <div class="flex justify-between">
+            <span class="text-slate-400">Курсовой результат акций:</span>
+            <span id="tax-stocks-pnl" class="font-bold text-white">0,00 ₽</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Налог при закрытии позиций:</span>
+            <span id="tax-stocks-due" class="font-extrabold text-white">0,00 ₽</span>
+          </div>
+        </div>
+        <p class="text-[10px] text-slate-400 leading-relaxed">
+          Убыточные акции автоматически сальдируют (уменьшают) налоговую базу прибыльных. Если итоговый результат в минусе — налог равен 0 ₽.
+        </p>
+      </div>
+
+      <!-- Секция 3: Таймер ЛДВ (3 года) -->
+      <div class="glass-card p-4 rounded-3xl space-y-3 shadow-xl">
+        <div class="flex justify-between items-center">
+          <div class="flex items-center gap-1.5">
+            <span class="text-sm">🛡️</span>
+            <span class="text-[11px] font-bold text-slate-300 uppercase tracking-wider">Статус ЛДВ (Льгота 3 года)</span>
+          </div>
+          <span class="text-[10px] text-slate-400">ст. 219.1 НК РФ</span>
+        </div>
+
+        <div id="ldv-items-list" class="space-y-2.5 pt-1"></div>
+      </div>
+
+    </div>
+
+    <!-- ================= ВКЛАДКА: АКЦИИ ================= -->
     <div id="tab-stocks" class="tab-view hidden space-y-3">
       <div class="flex justify-between items-center px-1">
         <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Акции в портфеле</h2>
@@ -196,7 +304,7 @@
       <div id="stocks-list" class="space-y-2.5"></div>
     </div>
 
-    <!-- ================= ВКЛАДКА 3: ОБЛИГАЦИИ ================= -->
+    <!-- ================= ВКЛАДКА: ОБЛИГАЦИИ ================= -->
     <div id="tab-bonds" class="tab-view hidden space-y-3">
       <div class="flex justify-between items-center px-1">
         <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Облигации в портфеле</h2>
@@ -205,7 +313,7 @@
       <div id="bonds-list" class="space-y-2.5"></div>
     </div>
 
-    <!-- ================= ВКЛАДКА 4: ДОБАВИТЬ СДЕЛКУ ================= -->
+    <!-- ================= ВКЛАДКА: ДОБАВИТЬ СДЕЛКУ ================= -->
     <div id="tab-add" class="tab-view hidden glass-card p-5 rounded-3xl shadow-xl space-y-4">
       <div class="flex justify-between items-center">
         <h2 class="text-base font-extrabold text-white">Новая сделка</h2>
@@ -275,8 +383,8 @@
     </div>
   </div>
 
-  <!-- Нижняя панель навигации -->
-  <nav class="fixed bottom-3 left-4 right-4 max-w-md mx-auto glass-card rounded-3xl border border-white/10 px-3 py-2 flex justify-around items-center text-[11px] font-bold z-50 shadow-2xl backdrop-blur-xl">
+  <!-- НИЖНЯЯ ПАНЕЛЬ НАВИГАЦИИ (5 КНОПОК) -->
+  <nav class="fixed bottom-3 left-4 right-4 max-w-md mx-auto glass-card rounded-3xl border border-white/10 px-2 py-2 flex justify-around items-center text-[10px] font-bold z-50 shadow-2xl backdrop-blur-xl">
     <button onclick="setTab('summary')" id="b-summary" class="flex flex-col items-center gap-1 text-slate-400 py-1 transition tab-active">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 4h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -294,6 +402,12 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
       </svg>
       <span>Облигации</span>
+    </button>
+    <button onclick="setTab('taxes')" id="b-taxes" class="flex flex-col items-center gap-1 text-slate-400 py-1 transition">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z" />
+      </svg>
+      <span>Налоги</span>
     </button>
     <button onclick="setTab('add')" id="b-add" class="flex flex-col items-center gap-1 text-slate-400 py-1 transition">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -320,68 +434,41 @@
     let currentAddType = "stock";
 
     const BRAND_DOMAINS = {
-      'SBER': 'sber.ru',
-      'SBERP': 'sber.ru',
-      'MTSS': 'mts.ru',
-      'SNGS': 'surgutneftegas.ru',
-      'SNGSP': 'surgutneftegas.ru',
-      'LKOH': 'lukoil.ru',
-      'GAZP': 'gazprom.ru',
-      'ROSN': 'rosneft.ru',
-      'NVTK': 'novatek.ru',
-      'GMKN': 'nornickel.com',
-      'YNDX': 'ya.ru',
-      'YDEX': 'ya.ru',
-      'T': 'tbank.ru',
-      'TCSG': 'tbank.ru',
-      'VTBR': 'vtb.ru',
-      'OZON': 'ozon.ru',
-      'CHMF': 'severstal.com',
-      'NLMK': 'nlmk.com',
-      'ALRS': 'alrosa.ru',
-      'MGNT': 'magnit.ru',
-      'POSI': 'ptsecurity.com',
-      'VKCO': 'vk.company',
-      'FLOT': 'scf-group.ru',
-      'MOEX': 'moex.com',
-      'AFLT': 'aeroflot.ru',
-      'PLZL': 'polyus.com',
-      'TATN': 'tatneft.ru',
-      'TATNP': 'tatneft.ru',
-      'CBOM': 'mkb.ru',
-      'MAGN': 'mmk.ru',
-      'SELG': 'seligdar.ru',
-      'AFKS': 'sistema.ru',
-      'BSPB': 'bspb.ru',
-      'SVCB': 'sovcombank.ru',
-      'SOFL': 'softline.ru',
-      'HEAD': 'hh.ru',
-      'WUSH': 'whoosh.bike',
-      'ASTR': 'astra.ru',
-      'LEAS': 'europlan.ru',
-      'MDMG': 'mcclinics.ru',
-      'OZPH': 'ozonpharm.ru'
+      'SBER': 'sber.ru', 'SBERP': 'sber.ru', 'MTSS': 'mts.ru', 'SNGS': 'surgutneftegas.ru',
+      'SNGSP': 'surgutneftegas.ru', 'LKOH': 'lukoil.ru', 'GAZP': 'gazprom.ru', 'ROSN': 'rosneft.ru',
+      'NVTK': 'novatek.ru', 'GMKN': 'nornickel.com', 'YNDX': 'ya.ru', 'YDEX': 'ya.ru',
+      'T': 'tbank.ru', 'TCSG': 'tbank.ru', 'VTBR': 'vtb.ru', 'OZON': 'ozon.ru',
+      'CHMF': 'severstal.com', 'NLMK': 'nlmk.com', 'ALRS': 'alrosa.ru', 'MGNT': 'magnit.ru',
+      'POSI': 'ptsecurity.com', 'VKCO': 'vk.company', 'FLOT': 'scf-group.ru', 'MOEX': 'moex.com'
     };
+
+    function parseAssetDate(dStr) {
+      if (!dStr) return null;
+      const s = String(dStr).trim();
+      if (s.includes('.')) {
+        const p = s.split('.');
+        if (p.length === 3) return new Date(p[2], p[1] - 1, p[0]);
+      }
+      const clean = s.replace(' ', 'T');
+      const d = new Date(clean);
+      return isNaN(d.getTime()) ? null : d;
+    }
 
     function getAssetLogoHtml(nameOrTicker, isBond = false) {
       const code = nameOrTicker.trim().toUpperCase();
-
       if (isBond) {
         return `
           <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-600/20 border border-amber-500/30 flex items-center justify-center text-amber-300 font-black text-xs shadow-md">
             🏛️
           </div>`;
       }
-
       const domain = BRAND_DOMAINS[code] || `${code.toLowerCase()}.ru`;
       const logoUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
       const initials = code.substring(0, 2);
 
       return `
         <div class="w-10 h-10 rounded-2xl bg-slate-800/90 border border-white/10 flex items-center justify-center overflow-hidden relative shadow-md">
-          <img src="${logoUrl}" 
-               alt="${code}" 
-               class="w-7 h-7 object-contain rounded-lg"
+          <img src="${logoUrl}" alt="${code}" class="w-7 h-7 object-contain rounded-lg"
                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
           <div class="w-full h-full absolute inset-0 hidden items-center justify-center font-extrabold text-xs text-blue-400 bg-blue-500/10">
             ${initials}
@@ -407,7 +494,7 @@
       document.querySelectorAll('.tab-view').forEach(el => el.classList.add('hidden'));
       document.getElementById('tab-' + name).classList.remove('hidden');
 
-      ['summary', 'stocks', 'bonds', 'add'].forEach(t => {
+      ['summary', 'stocks', 'bonds', 'taxes', 'add'].forEach(t => {
         const btn = document.getElementById('b-' + t);
         if (t === name) {
           btn.classList.add('tab-active');
@@ -441,6 +528,7 @@
         if (!map.has(key)) {
           map.set(key, {
             ticker: key,
+            buyDate: st.buyDate || '',
             quantity: 0,
             invested: 0,
             curPrice: Number(st.curPrice) || Number(st.buyPrice) || 0
@@ -454,6 +542,7 @@
         item.quantity += qty;
         item.invested += inv;
         if (st.curPrice && Number(st.curPrice) > 0) item.curPrice = Number(st.curPrice);
+        if (!item.buyDate && st.buyDate) item.buyDate = st.buyDate;
       });
 
       const result = [];
@@ -465,6 +554,7 @@
 
         result.push({
           ticker: item.ticker,
+          buyDate: item.buyDate,
           quantity: item.quantity,
           avgBuyPrice: avgBuyPrice,
           curCost: curCost,
@@ -482,14 +572,14 @@
         if (!map.has(key)) {
           map.set(key, {
             name: key,
+            buyDate: bd.buyDate || '',
             matDate: bd.matDate || '',
             quantity: 0,
             totalCostOnly: 0,
             totalSpent: 0,
             curCost: 0,
             coupon: Number(bd.coupon) || 0,
-            yearCouponNetTotal: 0,
-            curPricePct: bd.curPricePct || null
+            yearCouponTotal: 0
           });
         }
         const item = map.get(key);
@@ -504,21 +594,22 @@
         item.curCost += curCost;
         if (bd.coupon) item.coupon = Number(bd.coupon);
         if (bd.matDate) item.matDate = bd.matDate;
-        if (bd.curPricePct) item.curPricePct = bd.curPricePct;
+        if (!item.buyDate && bd.buyDate) item.buyDate = bd.buyDate;
 
-        const yearCoupon = Number(bd.yearCouponNet) || (item.coupon * 2 * qty * 0.87);
-        item.yearCouponNetTotal += yearCoupon;
+        const yearCoupon = Number(bd.yearCoupon) || (item.coupon * 2 * qty);
+        item.yearCouponTotal += yearCoupon;
       });
 
       const result = [];
       map.forEach(item => {
         const avgBuyPrice = item.quantity > 0 ? (item.totalCostOnly / item.quantity) : 0;
-        const yieldNet = item.totalSpent > 0 ? ((item.yearCouponNetTotal / item.totalSpent) * 100) : 0;
+        const yieldRate = item.totalSpent > 0 ? ((item.yearCouponTotal / item.totalSpent) * 100) : 0;
         const pnl = item.curCost - item.totalSpent;
         const pnlPct = item.totalSpent > 0 ? ((pnl / item.totalSpent) * 100) : 0;
 
         result.push({
           name: item.name,
+          buyDate: item.buyDate,
           matDate: item.matDate,
           quantity: item.quantity,
           avgBuyPrice: avgBuyPrice,
@@ -527,9 +618,8 @@
           curCost: item.curCost,
           pnl: pnl,
           pnlPct: pnlPct,
-          curPricePct: item.curPricePct,
-          yearCouponNetTotal: item.yearCouponNetTotal,
-          yieldNet: yieldNet
+          yearCouponTotal: item.yearCouponTotal,
+          yieldRate: yieldRate
         });
       });
       return result;
@@ -548,7 +638,7 @@
         const groupedStocks = groupStocks(data.stocks || []);
         const groupedBonds = groupBonds(data.bonds || []);
 
-        // 1. Сводка
+        // 1. СВОДКА (Экран А)
         document.getElementById('val-worth').innerText = formatRub(s.totalWorth);
         document.getElementById('val-invested').innerText = formatRub(s.invested);
         document.getElementById('val-income').innerText = (s.income >= 0 ? '+' : '') + formatRub(s.income);
@@ -557,7 +647,6 @@
         document.getElementById('val-stocks-inv').innerText = formatRub(s.stocksInv);
         document.getElementById('val-bonds-inv').innerText = formatRub(s.bondsInv);
 
-        // Индикатор дохода
         const badgeProfit = document.getElementById('badge-profit');
         if (s.income >= 0) {
           badgeProfit.className = "flex items-center gap-1 px-2.5 py-1 rounded-xl bg-emerald-500/15 border border-emerald-500/20 text-emerald-400 text-xs font-bold";
@@ -565,7 +654,7 @@
           badgeProfit.className = "flex items-center gap-1 px-2.5 py-1 rounded-xl bg-rose-500/15 border border-rose-500/20 text-rose-400 text-xs font-bold";
         }
 
-        // 2. Donut Chart
+        // Donut Chart
         const totalInv = (Number(s.stocksInv) + Number(s.bondsInv)) || 1;
         const sShare = Number(s.stocksInv) / totalInv;
         const bShare = Number(s.bondsInv) / totalInv;
@@ -583,21 +672,19 @@
 
         const donutStocks = document.getElementById('donut-stocks');
         const donutBonds = document.getElementById('donut-bonds');
-
         donutStocks.setAttribute('stroke-dasharray', `${sDash} ${C - sDash}`);
         donutStocks.setAttribute('stroke-dashoffset', '0');
-
         donutBonds.setAttribute('stroke-dasharray', `${bDash} ${C - bDash}`);
         donutBonds.setAttribute('stroke-dashoffset', `-${sDash}`);
 
-        // 3. Пассивный доход
-        let totalYearCouponNet = 0;
+        // Пассивный доход (100% купоны под реинвест)
+        let totalYearCoupon = 0;
         const timelineEl = document.getElementById('payouts-timeline');
         timelineEl.innerHTML = '';
 
         groupedBonds.forEach(bd => {
-          totalYearCouponNet += (bd.yearCouponNetTotal || 0);
-          const singlePayout = (bd.coupon * bd.quantity * 0.87);
+          totalYearCoupon += (bd.yearCouponTotal || 0);
+          const singlePayout = (bd.coupon * bd.quantity);
           timelineEl.innerHTML += `
             <div class="flex justify-between items-center bg-slate-800/40 p-2.5 rounded-xl border border-white/5 text-xs">
               <div>
@@ -615,10 +702,88 @@
           timelineEl.innerHTML = `<div class="text-[11px] text-slate-500 text-center py-2">Облигаций пока нет</div>`;
         }
 
-        document.getElementById('val-passive-year').innerText = '+' + formatRub(totalYearCouponNet);
-        document.getElementById('val-passive-month').innerText = '+' + formatRub(totalYearCouponNet / 12) + ' / мес';
+        document.getElementById('val-passive-year').innerText = '+' + formatRub(totalYearCoupon);
+        document.getElementById('val-passive-month').innerText = '+' + formatRub(totalYearCoupon / 12) + ' / мес';
 
-        // 4. Акции (Live рынок)
+        // ================= 2. НАЛОГОВЫЙ АУДИТ (Экран Б) =================
+        // А. Налог с купонов ОФЗ (13% к списанию в январе)
+        const bondTaxDue = totalYearCoupon * 0.13;
+        document.getElementById('tax-bonds-gross').innerText = formatRub(totalYearCoupon);
+        document.getElementById('tax-bonds-due').innerText = '-' + formatRub(bondTaxDue);
+
+        // Б. Налог с акций (Сальдирование прибылей и убытков)
+        let totalStockPnl = 0;
+        let taxableStockPnl = 0;
+        const now = new Date();
+        const ldvListEl = document.getElementById('ldv-items-list');
+        ldvListEl.innerHTML = '';
+
+        groupedStocks.forEach(st => {
+          totalStockPnl += st.pnl;
+          const bDate = parseAssetDate(st.buyDate);
+          let daysHeld = 1;
+          if (bDate) {
+            daysHeld = Math.max(1, Math.floor((now - bDate) / (1000 * 60 * 60 * 24)));
+          }
+
+          const isLdv = daysHeld >= 1095;
+          if (!isLdv) {
+            taxableStockPnl += st.pnl; // Сальдирование
+          }
+
+          // Элемент ЛДВ
+          const daysLeft = Math.max(0, 1095 - daysHeld);
+          const progressPct = Math.min(100, Math.round((daysHeld / 1095) * 100));
+
+          ldvListEl.innerHTML += `
+            <div class="bg-slate-900/70 p-3 rounded-2xl border border-white/5 space-y-1.5 text-xs">
+              <div class="flex justify-between items-center">
+                <div class="font-extrabold text-white flex items-center gap-1.5">
+                  <span>${st.ticker}</span>
+                  <span class="text-[10px] text-slate-400 font-normal">(${st.quantity} шт.)</span>
+                </div>
+                ${isLdv 
+                  ? `<span class="text-[10px] px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">🛡️ ЛДВ 0%</span>`
+                  : `<span class="text-[10px] text-slate-400">осталось <b class="text-amber-300">${daysLeft} дн.</b></span>`
+                }
+              </div>
+              <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                <div class="bg-gradient-to-r from-blue-500 to-emerald-400 h-1.5 rounded-full" style="width: ${progressPct}%"></div>
+              </div>
+              <div class="flex justify-between text-[10px] text-slate-500">
+                <span>В портфеле: ${daysHeld} дн.</span>
+                <span>Цель: 3 года (1 095 дн.)</span>
+              </div>
+            </div>`;
+        });
+
+        // Налог с курсового роста (только если итоговое сальдо в плюсе!)
+        const stockTaxDue = taxableStockPnl > 0 ? (taxableStockPnl * 0.13) : 0;
+        document.getElementById('tax-stocks-pnl').innerText = (totalStockPnl >= 0 ? '+' : '') + formatRub(totalStockPnl);
+        document.getElementById('tax-stocks-due').innerText = stockTaxDue > 0 ? `-${formatRub(stockTaxDue)}` : '0,00 ₽';
+        
+        const stocksBadge = document.getElementById('tax-stocks-badge');
+        if (stockTaxDue === 0) {
+          stocksBadge.innerText = totalStockPnl < 0 ? "Убыток защищает от налога" : "0 ₽ налога";
+          stocksBadge.className = "text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 font-bold border border-emerald-500/20";
+        } else {
+          stocksBadge.innerText = `13% с прибыли`;
+          stocksBadge.className = "text-[10px] px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-300 font-bold border border-rose-500/20";
+        }
+
+        // Общий отложенный налог
+        const totalTaxDue = bondTaxDue + stockTaxDue;
+        const netToWithdraw = Number(s.totalWorth) - totalTaxDue;
+
+        document.getElementById('tax-val-net').innerText = formatRub(netToWithdraw);
+        document.getElementById('tax-val-total').innerText = '-' + formatRub(totalTaxDue);
+
+        // Интерактивная плашка на Экране А
+        document.getElementById('card-tax-due').innerText = '-' + formatRub(totalTaxDue);
+        document.getElementById('card-net-withdraw').innerText = formatRub(netToWithdraw);
+
+        // ================= 3. СПИСКИ АКТИВОВ =================
+        // Акции
         document.getElementById('stocks-count').innerText = `${groupedStocks.length} поз.`;
         const sl = document.getElementById('stocks-list');
         sl.innerHTML = groupedStocks.length ? '' : '<div class="text-xs text-slate-500 text-center py-12 glass-card rounded-2xl">Акции пока не внесены</div>';
@@ -642,7 +807,7 @@
             </div>`;
         });
 
-        // 5. Облигации (Live рынок с MOEX)
+        // Облигации
         document.getElementById('bonds-count').innerText = `${groupedBonds.length} поз.`;
         const bl = document.getElementById('bonds-list');
         bl.innerHTML = groupedBonds.length ? '' : '<div class="text-xs text-slate-500 text-center py-12 glass-card rounded-2xl">Облигации пока не внесены</div>';
@@ -658,7 +823,7 @@
                 <div>
                   <div class="font-extrabold text-sm text-white">${bd.name}</div>
                   <div class="text-[11px] text-slate-400 font-medium">
-                    ${bd.quantity} шт. · ${formatRub(bd.avgBuyPrice)} · <span class="text-amber-400 font-bold">${bd.yieldNet.toFixed(1)}%</span>
+                    ${bd.quantity} шт. · ${formatRub(bd.avgBuyPrice)} · <span class="text-amber-400 font-bold">${bd.yieldRate.toFixed(1)}%</span>
                   </div>
                 </div>
               </div>
