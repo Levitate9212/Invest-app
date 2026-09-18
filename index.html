@@ -821,7 +821,7 @@
         // Облигации список
         document.getElementById('bonds-count').innerText = `${groupedBonds.length} поз.`;
         const bl = document.getElementById('bonds-list');
-        bl.innerHTML = groupedBonds.length ? '' : '<div class="text-xs text-slate-500 text-center py-12 glass-card rounded-2xl">Облигации пока не внесены</div>';
+        bl.innerHTML = groupedBonds.length ? '' : '<div class="text-xs text-slate-500 text-center py-12 glass-card rounded-2xl">Облигаций пока не внесены</div>';
         
         groupedBonds.forEach(bd => {
           const pnlText = bd.pnl >= 0 ? `+${formatRub(bd.pnl)}` : formatRub(bd.pnl);
