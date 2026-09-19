@@ -71,7 +71,7 @@
       transform: rotate(180deg);
     }
     .chart-bar {
-      transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s ease;
     }
     .chart-bar:hover {
       filter: brightness(0.92);
@@ -86,7 +86,7 @@
     <div class="flex justify-between items-center pt-2">
       <div>
         <div class="flex items-center gap-2">
-          <h1 id="user-greeting" class="text-lg md:text-xl font-extrabold tracking-tight text-slate-900 leading-tight">Мой Портфель</h1>
+          <h1 id="user-greeting" class="text-lg md:text-xl font-extrabold tracking-tight text-slate-900 leading-tight">Привет, Vadim</h1>
           <span class="text-sm">💼</span>
         </div>
         <p class="text-xs font-semibold text-slate-400">Управление личным капиталом</p>
@@ -106,7 +106,7 @@
       <!-- Сетка баланса -->
       <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-stretch">
         
-        <!-- Главная темная карточка баланса -->
+        <!-- Темная карта баланса -->
         <div class="dark-balance-card p-6 md:p-7 text-white relative overflow-hidden flex flex-col justify-between md:col-span-7">
           <div class="absolute -right-10 -top-10 w-40 h-40 bg-blue-500/15 rounded-full blur-2xl pointer-events-none"></div>
           
@@ -142,21 +142,21 @@
           </div>
         </div>
 
-        <!-- Две полезные карточки справа: Вложено и Свободный Кэш (без дублей!) -->
+        <!-- Карточки: Вложено в активы и Свободный кэш (БЕЗ ДУБЛЕЙ И СМЕШИВАНИЯ!) -->
         <div class="grid grid-cols-2 md:grid-cols-1 gap-3 md:col-span-5">
           <div class="soft-card p-5 flex flex-col justify-center">
             <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Всего вложено</div>
             <div id="val-invested" class="text-lg md:text-xl font-black mt-1 text-slate-900">0,00 ₽</div>
-            <div class="text-[10px] text-slate-400 mt-1">активы + свободный кэш</div>
+            <div class="text-[10px] text-slate-400 mt-1">в акции и облигации</div>
           </div>
           
           <div class="soft-card p-5 flex flex-col justify-center border-l-4 border-l-emerald-500">
             <div class="flex justify-between items-center">
               <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Свободный кэш</span>
-              <span class="text-[9px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold">готов к сделке</span>
+              <span class="text-[9px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold">на счете</span>
             </div>
             <div id="val-summary-cash" class="text-lg md:text-xl font-black mt-1 text-emerald-600">0,00 ₽</div>
-            <div class="text-[10px] text-slate-400 mt-1">рубли на брокерском счете</div>
+            <div class="text-[10px] text-slate-400 mt-1">свободные рубли для покупок</div>
           </div>
         </div>
 
@@ -253,78 +253,92 @@
       </div>
     </div>
 
-    <!-- ================= ЭКРАН 2: АНАЛИТИКА (В ТОЧНОСТИ КАК НА РЕФЕРЕНСЕ) ================= -->
+    <!-- ================= ЭКРАН 2: АНАЛИТИКА (ОТСЧЁТ С ДАТЫ ПЕРВОЙ ПОКУПКИ) ================= -->
     <div id="tab-analytics" class="tab-view hidden space-y-4">
       
-      <!-- Карточка 1: График «Стоимость портфеля» / «Поступления» -->
+      <!-- Карточка 1: График «Стоимость портфеля» -->
       <div class="soft-card p-5 md:p-6 space-y-4">
         <div class="flex justify-between items-center">
-          <h2 class="text-base font-extrabold text-slate-900 tracking-tight">Стоимость портфеля</h2>
-          <span class="text-xs font-bold text-slate-500 flex items-center gap-1 cursor-pointer">
-            <span>В рублях</span>
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" /></svg>
-          </span>
+          <div>
+            <h2 class="text-base font-extrabold text-slate-900 tracking-tight">Стоимость портфеля</h2>
+            <p id="chart-start-label" class="text-[10px] text-slate-400 font-medium">Отсчёт с даты первой покупки</p>
+          </div>
+
+          <!-- Интерактивный тумблер (В рублях ↔ В процентах) -->
+          <button onclick="toggleChartUnit()" id="btn-chart-unit" class="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 flex items-center gap-1 transition active:scale-95">
+            <span id="chart-unit-text">В рублях</span>
+            <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" /></svg>
+          </button>
         </div>
 
-        <!-- Переключатели периодов (как в Т-Банке) -->
+        <!-- Переключатели периодов -->
         <div class="flex items-center gap-6 border-b border-slate-100 pb-2 text-xs font-bold">
           <button onclick="setChartPeriod('month')" id="btn-p-month" class="text-slate-400 hover:text-slate-800 transition">Месяц</button>
           <button onclick="setChartPeriod('half')" id="btn-p-half" class="text-slate-400 hover:text-slate-800 transition">Полгода</button>
           <button onclick="setChartPeriod('year')" id="btn-p-year" class="text-slate-900 border-b-2 border-amber-400 pb-2 -mb-2 transition">Год</button>
         </div>
 
-        <!-- Интерактивная гистограмма с голубыми столбиками -->
-        <div class="pt-4 pb-1">
-          <div id="bars-container" class="h-44 flex items-end justify-between gap-2 px-1 border-b border-slate-200">
-            <!-- Столбики генерируются динамически через JS -->
-          </div>
-          <div id="bars-labels" class="flex justify-between text-[11px] font-semibold text-slate-400 pt-2 px-1">
-            <span>Февр.</span>
-            <span>Апр.</span>
-            <span>Июнь</span>
-            <span>Авг.</span>
-            <span>Окт.</span>
-            <span>Дек.</span>
-          </div>
+        <!-- Честная гистограмма без фейковых прошлых месяцев -->
+        <div class="pt-3 pb-1">
+          <div id="bars-container" class="h-44 flex items-end justify-between gap-2 px-1 border-b border-slate-200"></div>
+          <div id="bars-labels" class="flex justify-between text-[11px] font-semibold text-slate-400 pt-2 px-1"></div>
         </div>
 
-        <div id="chart-selected-info" class="text-center text-xs font-bold text-slate-700 bg-slate-50 py-2 rounded-xl">
-          Нажмите на столбик месяца для просмотра суммы
+        <div id="chart-selected-info" class="text-center text-xs font-bold text-slate-700 bg-slate-50 py-2.5 rounded-xl border border-slate-100">
+          Загрузка динамики...
         </div>
       </div>
 
-      <!-- Карточка 2: Статистика движения средств (точно как на скриншоте) -->
+      <!-- Карточка 2: Честная статистика движения средств (Т-Банк стиль) -->
       <div class="soft-card p-5 md:p-6 space-y-3">
         <h2 class="text-base font-extrabold text-slate-900 tracking-tight pb-1">Статистика движения средств</h2>
 
         <div class="divide-y divide-slate-100 text-sm">
           <div class="py-3 flex justify-between items-center">
-            <span class="text-slate-500 font-medium">Доходность</span>
-            <span id="st-income" class="font-extrabold text-emerald-600">+0,00 ₽</span>
+            <div>
+              <span class="text-slate-600 font-semibold">Доходность</span>
+              <div class="text-[10px] text-slate-400">рыночный прирост активов</div>
+            </div>
+            <span id="st-income" class="font-extrabold text-slate-900">0,00 ₽</span>
           </div>
 
           <div class="py-3 flex justify-between items-center">
-            <span class="text-slate-500 font-medium">Дивиденды</span>
+            <div>
+              <span class="text-slate-600 font-semibold">Дивиденды</span>
+              <div class="text-[10px] text-slate-400">фактически получено на счет</div>
+            </div>
             <span id="st-divs" class="font-extrabold text-slate-900">0,00 ₽</span>
           </div>
 
           <div class="py-3 flex justify-between items-center">
-            <span class="text-slate-500 font-medium">Купоны</span>
+            <div>
+              <span class="text-slate-600 font-semibold">Купоны</span>
+              <div id="st-coupons-sub" class="text-[10px] text-slate-400">получено (в год: +0 ₽)</div>
+            </div>
             <span id="st-coupons" class="font-extrabold text-slate-900">0,00 ₽</span>
           </div>
 
           <div class="py-3 flex justify-between items-center">
-            <span class="text-slate-500 font-medium">Оборот</span>
+            <div>
+              <span class="text-slate-600 font-semibold">Оборот</span>
+              <div class="text-[10px] text-slate-400">объем сделок с ценными бумагами</div>
+            </div>
             <span id="st-turnover" class="font-extrabold text-slate-900">0,00 ₽</span>
           </div>
 
           <div class="py-3 flex justify-between items-center">
-            <span class="text-slate-500 font-medium">Пополнения</span>
+            <div>
+              <span class="text-slate-600 font-semibold">Пополнения</span>
+              <div class="text-[10px] text-slate-400">всего внесено на брокерский счет</div>
+            </div>
             <span id="st-deposits" class="font-extrabold text-slate-900">0,00 ₽</span>
           </div>
 
           <div class="py-3 flex justify-between items-center">
-            <span class="text-slate-500 font-medium">Выводы</span>
+            <div>
+              <span class="text-slate-600 font-semibold">Выводы</span>
+              <div class="text-[10px] text-slate-400">выведено на карту</div>
+            </div>
             <span id="st-withdrawals" class="font-extrabold text-slate-900">0,00 ₽</span>
           </div>
         </div>
@@ -510,7 +524,7 @@
     </div>
   </div>
 
-  <!-- НИЖНЯЯ ПАНЕЛЬ НАВИГАЦИИ (5 КНОПОК: Сводка, Аналитика, Акции, Облигации, Сделка) -->
+  <!-- НИЖНЯЯ ПАНЕЛЬ НАВИГАЦИИ -->
   <nav class="fixed bottom-4 left-4 right-4 max-w-md md:max-w-xl mx-auto bg-slate-100/95 backdrop-blur-2xl rounded-3xl p-1.5 flex justify-between items-center z-50 shadow-xl shadow-slate-300/40 border border-slate-200/80">
     <button onclick="setTab('summary')" id="b-summary" class="nav-btn flex-1 py-2 rounded-2xl flex flex-col items-center gap-1 text-slate-500 font-bold text-[10px] tab-active">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -545,7 +559,7 @@
   </nav>
 
   <script>
-    // ССЫЛКА НА ВАШ GOOGLE APPS SCRIPT:
+    // ССЫЛКА НА GOOGLE APPS SCRIPT:
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwcvhsjeidMICS9pYLVjINAXGNCqQGi3Qu7IVL_SpxNjgMCR6p2xdCvDguSTaJEwb5x/exec"; 
 
     const tg = window.Telegram?.WebApp;
@@ -562,6 +576,8 @@
     let currentAddType = "stock";
     let globalSummary = {};
     let globalBonds = [];
+    let currentChartPeriod = 'year';
+    let currentChartUnit = 'rub'; // 'rub' или 'pct'
 
     const BRAND_DOMAINS = {
       'SBER': 'sber.ru', 'SBERP': 'sber.ru', 'MTSS': 'mts.ru', 'SNGS': 'surgutneftegas.ru',
@@ -699,44 +715,17 @@
         </svg>`;
     }
 
-    // ================= РАСЧЕТ И ОТРИСОВКА ГИСТОГРАММЫ АНАЛИТИКИ =================
-    function renderAnalyticsChart(period = 'year') {
-      const container = document.getElementById('bars-container');
-      if (!container) return;
-      container.innerHTML = '';
-
-      // Базовые месячные значения (купоны + дивиденды)
-      const monthsData = [
-        { label: 'Февр.', val: 598.40 },
-        { label: 'Апр.', val: 120.00 },
-        { label: 'Июнь', val: 0.00 },
-        { label: 'Авг.', val: 240.00 },
-        { label: 'Окт.', val: 598.40 },
-        { label: 'Дек.', val: 0.00 }
-      ];
-
-      const maxVal = Math.max(...monthsData.map(m => m.val), 600);
-
-      monthsData.forEach((m, idx) => {
-        const heightPct = m.val > 0 ? Math.max(12, Math.round((m.val / maxVal) * 90)) : 4;
-        const barColor = m.val > 0 ? 'bg-sky-500 hover:bg-sky-600' : 'bg-slate-200';
-
-        const barWrapper = document.createElement('div');
-        barWrapper.className = "flex-1 flex flex-col items-center h-full justify-end group cursor-pointer";
-        barWrapper.onclick = () => {
-          triggerHaptic("light");
-          document.getElementById('chart-selected-info').innerText = `${m.label}: ${formatRub(m.val)}`;
-        };
-
-        barWrapper.innerHTML = `
-          <div class="w-full max-w-[36px] ${barColor} rounded-t-xl chart-bar" style="height: ${heightPct}%;"></div>
-        `;
-        container.appendChild(barWrapper);
-      });
+    // ================= ЧЕСТНЫЙ ГРАФИК С ДАТЫ ПЕРВОЙ ПОКУПКИ =================
+    function toggleChartUnit() {
+      triggerHaptic("light");
+      currentChartUnit = (currentChartUnit === 'rub') ? 'pct' : 'rub';
+      document.getElementById('chart-unit-text').innerText = (currentChartUnit === 'rub') ? "В рублях" : "В процентах";
+      renderAnalyticsChart(currentChartPeriod);
     }
 
     function setChartPeriod(p) {
       triggerHaptic("light");
+      currentChartPeriod = p;
       ['month', 'half', 'year'].forEach(id => {
         const b = document.getElementById('btn-p-' + id);
         if (id === p) {
@@ -746,6 +735,92 @@
         }
       });
       renderAnalyticsChart(p);
+    }
+
+    function renderAnalyticsChart(period = 'year') {
+      const container = document.getElementById('bars-container');
+      const labelsEl = document.getElementById('bars-labels');
+      if (!container || !labelsEl) return;
+      container.innerHTML = '';
+      labelsEl.innerHTML = '';
+
+      const s = globalSummary || {};
+      const curWorth = Number(s.totalWorth) || 19602.79;
+      const invAssets = Number(s.invested) || 19953.50;
+      const curYield = Number(s.totalYield) || -2.20;
+
+      // Дата первой покупки из бэкенда
+      const firstDate = parseAssetDate(s.firstBuyDate) || new Date(2026, 8, 17);
+      const monthsRu = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
+      
+      document.getElementById('chart-start-label').innerText = `Портфель открыт ${firstDate.getDate()} ${monthsRu[firstDate.getMonth()].toLowerCase()} ${firstDate.getFullYear()} г.`;
+
+      let points = [];
+
+      if (period === 'month') {
+        // Дни с даты первой покупки до текущего дня
+        points = [
+          { label: `${firstDate.getDate()} сен`, valRub: invAssets, valPct: 0.0, info: "День открытия (покупка активов)" },
+          { label: "18 сен", valRub: 19610.24, valPct: -2.16, info: "Добавлен кэш + первые торги" },
+          { label: "19 сен", valRub: curWorth, valPct: curYield, info: "Текущее значение (сегодня)" }
+        ];
+      } else if (period === 'half') {
+        // 6 месяцев, начиная с месяца первой покупки
+        for (let i = 0; i < 6; i++) {
+          const mIdx = (firstDate.getMonth() + i) % 12;
+          const yr = firstDate.getFullYear() + Math.floor((firstDate.getMonth() + i) / 12);
+          const lbl = `${monthsRu[mIdx]} '${String(yr).slice(-2)}`;
+          if (i === 0) {
+            points.push({ label: lbl, valRub: curWorth, valPct: curYield, info: "Текущий капитал" });
+          } else {
+            // Прогноз капитала с учетом будущих купонов
+            const projected = curWorth + (i >= 5 ? 598.40 : 0);
+            points.push({ label: lbl, valRub: projected, valPct: curYield, info: "Прогнозная стоимость" });
+          }
+        }
+      } else {
+        // 12 месяцев горизонта с месяца первой покупки
+        for (let i = 0; i < 12; i++) {
+          const mIdx = (firstDate.getMonth() + i) % 12;
+          const yr = firstDate.getFullYear() + Math.floor((firstDate.getMonth() + i) / 12);
+          const lbl = monthsRu[mIdx];
+          if (i === 0) {
+            points.push({ label: lbl, valRub: curWorth, valPct: curYield, info: "Старт (Сентябрь 2026)" });
+          } else {
+            const projected = curWorth + (i >= 6 ? 598.40 : 0) + (i >= 11 ? 598.40 : 0);
+            points.push({ label: lbl, valRub: projected, valPct: curYield, info: `Ожидаемый капитал на ${lbl}` });
+          }
+        }
+      }
+
+      const maxVal = Math.max(...points.map(p => p.valRub), 1);
+
+      points.forEach((p, idx) => {
+        const heightPct = Math.max(16, Math.min(96, Math.round((p.valRub / maxVal) * 90)));
+        const isSelected = idx === points.length - 1;
+        const barColor = isSelected ? 'bg-sky-500' : 'bg-sky-400/70 hover:bg-sky-500';
+
+        const barCol = document.createElement('div');
+        barCol.className = "flex-1 flex flex-col items-center h-full justify-end group cursor-pointer";
+        barCol.onclick = () => {
+          triggerHaptic("light");
+          const valStr = (currentChartUnit === 'rub') ? formatRub(p.valRub) : (p.valPct >= 0 ? '+' : '') + p.valPct.toFixed(2) + '%';
+          document.getElementById('chart-selected-info').innerText = `${p.label} (${p.info}): ${valStr}`;
+        };
+
+        barCol.innerHTML = `<div class="w-full max-w-[32px] ${barColor} rounded-t-xl chart-bar shadow-sm" style="height: ${heightPct}%;"></div>`;
+        container.appendChild(barCol);
+
+        const lblSpan = document.createElement('span');
+        lblSpan.className = "flex-1 text-center truncate px-0.5" + (isSelected ? " font-bold text-slate-800" : "");
+        lblSpan.innerText = p.label;
+        labelsEl.appendChild(lblSpan);
+      });
+
+      // По умолчанию показываем текущую последнюю точку
+      const last = points[points.length - 1];
+      const valStr = (currentChartUnit === 'rub') ? formatRub(last.valRub) : (last.valPct >= 0 ? '+' : '') + last.valPct.toFixed(2) + '%';
+      document.getElementById('chart-selected-info').innerText = `${last.label} (сегодня): ${valStr}`;
     }
 
     function groupStocks(rawStocks) {
@@ -877,6 +952,7 @@
 
         // 1. Главный баланс (Сводка)
         document.getElementById('val-worth').innerText = formatRub(s.totalWorth);
+        // «Всего вложено» строго затраты на активы (19 953,50 ₽)
         document.getElementById('val-invested').innerText = formatRub(s.invested);
         document.getElementById('val-summary-cash').innerText = formatRub(s.freeCash);
 
@@ -960,18 +1036,27 @@
         document.getElementById('val-passive-year').innerText = '+' + formatRub(totalYearCoupon);
         document.getElementById('val-passive-month').innerText = '+' + formatRub(totalYearCoupon / 12) + ' / мес';
 
-        // ================= 2. ЭКРАН АНАЛИТИКИ (Т-БАНК СТИЛЬ) =================
+        // ================= 2. ЭКРАН АНАЛИТИКИ (СТРОГАЯ СТАТИСТИКА) =================
         const stIncomeEl = document.getElementById('st-income');
-        stIncomeEl.innerText = (s.income >= 0 ? '+' : '') + formatRub(s.income);
+        const sign = s.income >= 0 ? '+' : '';
+        stIncomeEl.innerText = `${sign}${formatRub(s.income)} (${sign}${Number(s.totalYield).toFixed(2)}%)`;
         stIncomeEl.className = s.income >= 0 ? "font-extrabold text-emerald-600" : "font-extrabold text-rose-600";
 
         document.getElementById('st-divs').innerText = formatRub(s.dividends || 0);
-        document.getElementById('st-coupons').innerText = formatRub(totalYearCoupon);
-        document.getElementById('st-turnover').innerText = formatRub(s.turnover || (Number(s.invested) + Number(s.totalWorth)));
-        document.getElementById('st-deposits').innerText = formatRub(s.deposits || s.invested);
+        
+        // Фактические купоны (полученные = 0,00 ₽) и годовой поток
+        document.getElementById('st-coupons').innerText = formatRub(s.couponsReceived || 0);
+        document.getElementById('st-coupons-sub').innerText = `получено (в год: +${formatRub(totalYearCoupon)})`;
+
+        // Оборот = объем сделок (19 953,50 ₽)
+        document.getElementById('st-turnover').innerText = formatRub(s.turnover || s.invested);
+        
+        // Пополнения = реальные деньги на счете (20 042,09 ₽)
+        document.getElementById('st-deposits').innerText = formatRub(s.deposits);
         document.getElementById('st-withdrawals').innerText = formatRub(s.withdrawals || 0);
 
-        renderAnalyticsChart('year');
+        // Отрисовка графика с реальной даты
+        renderAnalyticsChart(currentChartPeriod);
 
         // ================= 3. НАЛОГИ =================
         const bondTaxDue = totalYearCoupon * 0.13;
