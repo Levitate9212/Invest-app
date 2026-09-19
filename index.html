@@ -74,10 +74,10 @@
 </head>
 <body class="pb-32 select-none antialiased min-h-screen">
   
-  <!-- Адаптивный контейнер: на смартфонах по центру, на ПК расширяется до комфортных 960px -->
+  <!-- Адаптивный контейнер -->
   <div class="px-4 py-3 max-w-md md:max-w-3xl lg:max-w-4xl mx-auto space-y-4">
 
-    <!-- Верхняя шапка профиля (без лишних черных кругов) -->
+    <!-- Верхняя шапка профиля -->
     <div class="flex justify-between items-center pt-2">
       <div>
         <div class="flex items-center gap-2">
@@ -98,17 +98,16 @@
     <!-- ================= ЭКРАН А: СВОДКА ================= -->
     <div id="tab-summary" class="tab-view space-y-4">
       
-      <!-- Адаптивная верхняя сетка (на ПК карта баланса слева, сводка справа) -->
+      <!-- Сетка баланса -->
       <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-stretch">
         
-        <!-- Темная премиальная карта баланса -->
+        <!-- Темная карточка баланса -->
         <div class="dark-balance-card p-6 md:p-7 text-white relative overflow-hidden flex flex-col justify-between md:col-span-7">
           <div class="absolute -right-10 -top-10 w-40 h-40 bg-blue-500/15 rounded-full blur-2xl pointer-events-none"></div>
           
           <div>
             <div class="flex justify-between items-center text-xs font-semibold text-slate-300">
               <span>Всего на счетах (капитал)</span>
-              <span id="badge-assets-summary" class="px-3 py-1 rounded-full bg-white/10 text-white text-[11px] font-bold backdrop-blur-md">0 активов</span>
             </div>
 
             <div id="val-worth" class="text-3xl md:text-4xl font-black mt-2 text-white tracking-tight">0,00 ₽</div>
@@ -124,12 +123,12 @@
             </div>
           </div>
 
-          <!-- Интерактивная плашка отложенного налога -->
-          <div onclick="setTab('taxes')" class="mt-5 pt-3.5 border-t border-white/10 flex justify-between items-center text-xs cursor-pointer active:opacity-80 transition">
+          <!-- Интерактивная плашка отложенного налога (переход на аудит) -->
+          <div onclick="setTab('taxes')" class="mt-5 pt-3.5 border-t border-white/10 flex justify-between items-center text-xs cursor-pointer active:opacity-80 transition group">
             <div class="text-[11px] text-slate-300">
-              К выводу на карту: <b id="card-net-withdraw" class="text-white">0,00 ₽</b>
+              К выводу на карту: <b id="card-net-withdraw" class="text-white font-bold">0,00 ₽</b>
             </div>
-            <div class="text-[11px] font-bold text-sky-300 flex items-center gap-0.5">
+            <div class="text-[11px] font-bold text-sky-300 flex items-center gap-0.5 group-hover:translate-x-0.5 transition">
               <span>Аудит налога</span>
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
@@ -154,14 +153,13 @@
 
       </div>
 
-      <!-- Вторая адаптивная секция: Диаграмма и Пассивный доход -->
+      <!-- Секция: Диаграмма и Пассивный доход -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         
-        <!-- Структура портфеля (Donut Chart) -->
+        <!-- Структура капитала (без "4 поз.") -->
         <div class="soft-card p-5 space-y-3">
           <div class="flex justify-between items-center">
             <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Структура капитала</span>
-            <span id="total-assets-count" class="text-xs text-slate-500 font-bold">0 поз.</span>
           </div>
 
           <div class="flex items-center justify-between gap-3 pt-2">
@@ -215,7 +213,7 @@
           </div>
         </div>
 
-        <!-- Пассивный доход -->
+        <!-- Пассивный доход (без "реинвест 100%") -->
         <div class="soft-card p-5 space-y-3 flex flex-col justify-between">
           <div>
             <div class="flex justify-between items-center">
@@ -223,7 +221,6 @@
                 <span class="text-sm">💰</span>
                 <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Пассивный доход</span>
               </div>
-              <span class="text-[10px] px-2.5 py-0.5 rounded-full bg-sky-50 text-sky-700 font-bold border border-sky-100">реинвест 100%</span>
             </div>
 
             <div class="grid grid-cols-2 gap-2 bg-slate-50 p-3 rounded-2xl border border-slate-100 mt-3">
@@ -238,6 +235,7 @@
             </div>
           </div>
 
+          <!-- Ожидаемые выплаты с приближением даты -->
           <div class="space-y-1.5 pt-2">
             <div class="text-[11px] font-bold text-slate-400 uppercase">Ожидаемые выплаты</div>
             <div id="payouts-timeline" class="space-y-1.5 max-h-36 overflow-y-auto pr-1"></div>
@@ -249,6 +247,18 @@
 
     <!-- ================= ЭКРАН Б: НАЛОГИ И АУДИТ ================= -->
     <div id="tab-taxes" class="tab-view hidden space-y-4">
+      
+      <!-- Кнопка возврата к сводке -->
+      <div class="flex items-center justify-between px-1">
+        <button onclick="setTab('summary')" class="flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-slate-900 bg-white soft-card px-3 py-1.5 rounded-xl active:scale-95 transition">
+          <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+          </svg>
+          <span>К сводке</span>
+        </button>
+        <span class="text-xs font-semibold text-slate-400">Налоговый аудит портфеля</span>
+      </div>
+
       <div class="dark-balance-card p-6 md:p-7 text-white relative overflow-hidden">
         <span class="text-[11px] font-semibold text-slate-300 uppercase tracking-wider">Чистыми к выводу прямо сейчас</span>
         <div id="tax-val-net" class="text-3xl md:text-4xl font-black mt-1 text-emerald-400 tracking-tight">0,00 ₽</div>
@@ -330,10 +340,10 @@
       <div id="bonds-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
     </div>
 
-    <!-- ================= ВКЛАДКА: ДОБАВИТЬ ОПЕРАЦИЮ ================= -->
+    <!-- ================= ВКЛАДКА: НОВАЯ СДЕЛКА (БЫВШАЯ "ЗАПИСЬ") ================= -->
     <div id="tab-add" class="tab-view hidden soft-card p-6 space-y-4 max-w-lg mx-auto">
       <div class="flex justify-between items-center">
-        <h2 class="text-base font-extrabold text-slate-900">Новая операция</h2>
+        <h2 class="text-base font-extrabold text-slate-900">Новая сделка</h2>
         <span class="text-xs text-slate-400 font-medium">Запись в Google Таблицу</span>
       </div>
 
@@ -413,14 +423,14 @@
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
         </svg>
-        <span>Записать в таблицу</span>
+        <span>Записать сделку</span>
       </button>
       <div id="save-status" class="text-center text-xs hidden font-bold"></div>
     </div>
   </div>
 
-  <!-- НИЖНЯЯ ПАНЕЛЬ НАВИГАЦИИ (Soft Neumorphic Floating Dock) -->
-  <nav class="fixed bottom-4 left-4 right-4 max-w-md md:max-w-xl mx-auto bg-slate-100/90 backdrop-blur-2xl rounded-3xl p-1.5 flex justify-between items-center z-50 shadow-xl shadow-slate-300/40 border border-slate-200/80">
+  <!-- НИЖНЯЯ ПАНЕЛЬ НАВИГАЦИИ (4 КНОПКИ: Сводка, Акции, Облигации, Сделка) -->
+  <nav class="fixed bottom-4 left-4 right-4 max-w-md md:max-w-xl mx-auto bg-slate-100/95 backdrop-blur-2xl rounded-3xl p-1.5 flex justify-between items-center z-50 shadow-xl shadow-slate-300/40 border border-slate-200/80">
     <button onclick="setTab('summary')" id="b-summary" class="nav-btn flex-1 py-2 rounded-2xl flex flex-col items-center gap-1 text-slate-500 font-bold text-[10px] tab-active">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 4h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -439,17 +449,11 @@
       </svg>
       <span>Облигации</span>
     </button>
-    <button onclick="setTab('taxes')" id="b-taxes" class="nav-btn flex-1 py-2 rounded-2xl flex flex-col items-center gap-1 text-slate-500 font-bold text-[10px]">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z" />
-      </svg>
-      <span>Налоги</span>
-    </button>
     <button onclick="setTab('add')" id="b-add" class="nav-btn flex-1 py-2 rounded-2xl flex flex-col items-center gap-1 text-slate-500 font-bold text-[10px]">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
-      <span>Запись</span>
+      <span>Сделка</span>
     </button>
   </nav>
 
@@ -489,6 +493,26 @@
       const clean = s.replace(' ', 'T');
       const d = new Date(clean);
       return isNaN(d.getTime()) ? null : d;
+    }
+
+    function formatCouponDate(dateStr) {
+      if (!dateStr) return null;
+      const d = parseAssetDate(dateStr);
+      if (!d) return null;
+
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const target = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+      const diffDays = Math.round((target - today) / (1000 * 60 * 60 * 24));
+
+      const monthNames = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+      const dateFormatted = `${d.getDate()} ${monthNames[d.getMonth()]}`;
+
+      if (diffDays === 0) return { text: `Сегодня (${dateFormatted})`, isSoon: true, days: 0 };
+      if (diffDays === 1) return { text: `Завтра (${dateFormatted})`, isSoon: true, days: 1 };
+      if (diffDays > 1 && diffDays <= 30) return { text: `${dateFormatted} (через ${diffDays} дн.)`, isSoon: true, days: diffDays };
+      if (diffDays > 30) return { text: `${dateFormatted} (через ${diffDays} дн.)`, isSoon: false, days: diffDays };
+      return { text: dateFormatted, isSoon: false, days: diffDays };
     }
 
     function getAssetLogoHtml(nameOrTicker, isBond = false) {
@@ -531,12 +555,11 @@
       document.querySelectorAll('.tab-view').forEach(el => el.classList.add('hidden'));
       document.getElementById('tab-' + name).classList.remove('hidden');
 
-      ['summary', 'stocks', 'bonds', 'taxes', 'add'].forEach(t => {
+      ['summary', 'stocks', 'bonds', 'add'].forEach(t => {
         const btn = document.getElementById('b-' + t);
-        if (t === name) {
-          btn.classList.add('tab-active');
-        } else {
-          btn.classList.remove('tab-active');
+        if (btn) {
+          if (t === name) btn.classList.add('tab-active');
+          else btn.classList.remove('tab-active');
         }
       });
     }
@@ -561,9 +584,7 @@
     function toggleAccordion(id) {
       triggerHaptic("light");
       const el = document.getElementById(id);
-      if (el) {
-        el.classList.toggle('accordion-open');
-      }
+      if (el) el.classList.toggle('accordion-open');
     }
 
     function quickBuy(type, identifier) {
@@ -644,6 +665,7 @@
             name: key,
             buyDate: bd.buyDate || '',
             matDate: bd.matDate || '',
+            nextCoupon: bd.nextCoupon || '',
             quantity: 0,
             totalCostOnly: 0,
             totalSpent: 0,
@@ -666,6 +688,7 @@
         if (bd.curPrice) item.curPrice = Number(bd.curPrice);
         if (bd.coupon) item.coupon = Number(bd.coupon);
         if (bd.matDate) item.matDate = bd.matDate;
+        if (bd.nextCoupon) item.nextCoupon = bd.nextCoupon;
         if (!item.buyDate && bd.buyDate) item.buyDate = bd.buyDate;
 
         const yearCoupon = Number(bd.yearCoupon) || (item.coupon * 2 * qty);
@@ -683,6 +706,7 @@
           name: item.name,
           buyDate: item.buyDate,
           matDate: item.matDate,
+          nextCoupon: item.nextCoupon,
           quantity: item.quantity,
           avgBuyPrice: avgBuyPrice,
           curPrice: item.curPrice || avgBuyPrice,
@@ -710,7 +734,6 @@
 
         const groupedStocks = groupStocks(data.stocks || []);
         const groupedBonds = groupBonds(data.bonds || []);
-        const totalPositions = groupedStocks.length + groupedBonds.length;
 
         // 1. Главный баланс
         document.getElementById('val-worth').innerText = formatRub(s.totalWorth);
@@ -722,7 +745,6 @@
         document.getElementById('val-stocks-inv').innerText = formatRub(s.stocksInv);
         document.getElementById('val-bonds-inv').innerText = formatRub(s.bondsInv);
         document.getElementById('val-cash-inv').innerText = formatRub(s.freeCash);
-        document.getElementById('badge-assets-summary').innerText = `${totalPositions} активов`;
 
         const badgeProfit = document.getElementById('badge-profit');
         if (s.income >= 0) {
@@ -740,8 +762,6 @@
         document.getElementById('stocks-pct-label').innerText = `${Math.round(sShare * 100)}%`;
         document.getElementById('bonds-pct-label').innerText = `${Math.round(bShare * 100)}%`;
         document.getElementById('cash-pct-label').innerText = `${Math.round(cShare * 100)}%`;
-
-        document.getElementById('total-assets-count').innerText = `${totalPositions} поз.`;
         document.getElementById('donut-center-val').innerText = Number(s.totalWorth).toLocaleString('ru-RU', {maximumFractionDigits: 0}) + ' ₽';
 
         const C = 301.6;
@@ -762,7 +782,7 @@
         donutCash.setAttribute('stroke-dasharray', `${cDash} ${C - cDash}`);
         donutCash.setAttribute('stroke-dashoffset', `-${sDash + bDash}`);
 
-        // Пассивный доход
+        // Пассивный доход и Ожидаемые выплаты
         let totalYearCoupon = 0;
         const timelineEl = document.getElementById('payouts-timeline');
         timelineEl.innerHTML = '';
@@ -770,11 +790,22 @@
         groupedBonds.forEach(bd => {
           totalYearCoupon += (bd.yearCouponTotal || 0);
           const singlePayout = (bd.coupon * bd.quantity);
+          const couponInfo = formatCouponDate(bd.nextCoupon);
+
+          let dateHtml = `<span class="text-slate-500 font-medium">2 выплаты в год</span>`;
+          if (couponInfo) {
+            if (couponInfo.isSoon) {
+              dateHtml = `<span class="px-2 py-0.5 rounded-lg bg-amber-100 text-amber-800 font-extrabold text-[10px]">🔔 ${couponInfo.text}</span>`;
+            } else {
+              dateHtml = `<span class="text-slate-600 font-semibold text-[10px]">Ближайшая: ${couponInfo.text}</span>`;
+            }
+          }
+
           timelineEl.innerHTML += `
             <div class="flex justify-between items-center bg-slate-50 p-2.5 rounded-2xl border border-slate-100 text-xs">
               <div>
                 <div class="font-bold text-slate-900">${bd.name}</div>
-                <div class="text-[10px] text-slate-400 font-medium">2 выплаты в год · ${bd.quantity} шт.</div>
+                <div class="mt-0.5">${dateHtml}</div>
               </div>
               <div class="text-right">
                 <div class="font-black text-emerald-600">+${formatRub(singlePayout)}</div>
@@ -855,7 +886,7 @@
         document.getElementById('tax-val-total').innerText = '-' + formatRub(totalTaxDue);
         document.getElementById('card-net-withdraw').innerText = formatRub(netToWithdraw);
 
-        // ================= 3. РАСКРЫВАЮЩИЕСЯ СПИСКИ (АКЦИИ) =================
+        // 3. Акции (список)
         document.getElementById('stocks-count').innerText = `${groupedStocks.length} поз.`;
         const sl = document.getElementById('stocks-list');
         sl.innerHTML = groupedStocks.length ? '' : '<div class="text-xs text-slate-400 text-center py-12 soft-card col-span-2">Акции пока не внесены</div>';
@@ -874,7 +905,6 @@
 
           sl.innerHTML += `
             <div id="${accId}" class="soft-card overflow-hidden transition cursor-pointer">
-              <!-- Заголовок карточки (Клик раскрывает) -->
               <div onclick="toggleAccordion('${accId}')" class="p-4 flex justify-between items-center select-none">
                 <div class="flex items-center gap-3">
                   ${getAssetLogoHtml(st.ticker, false)}
@@ -900,11 +930,8 @@
                 </div>
               </div>
 
-              <!-- Раскрывающаяся часть с подробными данными и мини-графиком -->
               <div class="accordion-body px-4 pb-4 border-t border-slate-100/80 pt-3">
                 <div class="space-y-3">
-                  
-                  <!-- Мини-график (Sparkline) -->
                   <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100 flex items-center justify-between gap-3">
                     <div class="text-xs">
                       <div class="text-[10px] font-bold text-slate-400 uppercase">Динамика</div>
@@ -919,7 +946,6 @@
                     </div>
                   </div>
 
-                  <!-- Сетка детальных параметров -->
                   <div class="grid grid-cols-2 gap-2 text-xs">
                     <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
                       <div class="text-[10px] text-slate-400 font-semibold">Всего вложено</div>
@@ -931,7 +957,6 @@
                     </div>
                   </div>
 
-                  <!-- Статус ЛДВ -->
                   <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100 space-y-1.5 text-xs">
                     <div class="flex justify-between items-center">
                       <span class="text-slate-500 font-medium">Льгота 3 года (ЛДВ):</span>
@@ -945,7 +970,6 @@
                     </div>
                   </div>
 
-                  <!-- Кнопка быстрого пополнения позиции -->
                   <button onclick="quickBuy('stock', '${st.ticker}')" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold shadow-sm transition active:scale-98 flex items-center justify-center gap-1.5">
                     <span>+ Докупить ${st.ticker}</span>
                   </button>
@@ -954,7 +978,7 @@
             </div>`;
         });
 
-        // ================= 4. РАСКРЫВАЮЩИЕСЯ СПИСКИ (ОБЛИГАЦИИ) =================
+        // 4. Облигации (список)
         document.getElementById('bonds-count').innerText = `${groupedBonds.length} поз.`;
         const bl = document.getElementById('bonds-list');
         bl.innerHTML = groupedBonds.length ? '' : '<div class="text-xs text-slate-400 text-center py-12 soft-card col-span-2">Облигации пока не внесены</div>';
@@ -964,10 +988,10 @@
           const isPos = bd.pnl >= 0;
           const pnlClass = isPos ? 'text-emerald-600' : 'text-rose-600';
           const pnlSign = isPos ? '+' : '';
+          const couponInfo = formatCouponDate(bd.nextCoupon);
 
           bl.innerHTML += `
             <div id="${accId}" class="soft-card overflow-hidden transition cursor-pointer">
-              <!-- Заголовок карточки -->
               <div onclick="toggleAccordion('${accId}')" class="p-4 flex justify-between items-center select-none">
                 <div class="flex items-center gap-3">
                   ${getAssetLogoHtml(bd.name, true)}
@@ -993,16 +1017,13 @@
                 </div>
               </div>
 
-              <!-- Раскрывающаяся часть с подробными данными облигации -->
               <div class="accordion-body px-4 pb-4 border-t border-slate-100/80 pt-3">
                 <div class="space-y-3">
-                  
-                  <!-- Купонный поток и погашение -->
                   <div class="grid grid-cols-2 gap-2 text-xs">
                     <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
                       <div class="text-[10px] text-slate-400 font-semibold">Размер купона</div>
                       <div class="font-bold text-emerald-600 mt-0.5">+${formatRub(bd.coupon)}</div>
-                      <div class="text-[9px] text-slate-400">2 выплаты в год</div>
+                      <div class="text-[9px] text-slate-400">${couponInfo ? couponInfo.text : '2 выплаты в год'}</div>
                     </div>
                     <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
                       <div class="text-[10px] text-slate-400 font-semibold">Дата погашения</div>
@@ -1011,7 +1032,6 @@
                     </div>
                   </div>
 
-                  <!-- Финансы позиции -->
                   <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100 space-y-1.5 text-xs">
                     <div class="flex justify-between">
                       <span class="text-slate-500">Годовой доход с позиции:</span>
@@ -1027,7 +1047,6 @@
                     </div>
                   </div>
 
-                  <!-- Кнопка быстрого пополнения позиции -->
                   <button onclick="quickBuy('bond', '${bd.name}')" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold shadow-sm transition active:scale-98 flex items-center justify-center gap-1.5">
                     <span>+ Докупить ${bd.name}</span>
                   </button>
@@ -1064,7 +1083,7 @@
         if (!payload.ticker || !payload.quantity || !payload.price) {
           alert("Заполните все поля акции!");
           btn.disabled = false;
-          btn.innerHTML = `Записать в таблицу`;
+          btn.innerHTML = `Записать сделку`;
           status.classList.add('hidden');
           return;
         }
@@ -1079,7 +1098,7 @@
         if (!payload.name || !payload.quantity || !payload.price) {
           alert("Заполните основные поля облигации!");
           btn.disabled = false;
-          btn.innerHTML = `Записать в таблицу`;
+          btn.innerHTML = `Записать сделку`;
           status.classList.add('hidden');
           return;
         }
@@ -1090,7 +1109,7 @@
         if (!payload.amount) {
           alert("Введите сумму операции!");
           btn.disabled = false;
-          btn.innerHTML = `Записать в таблицу`;
+          btn.innerHTML = `Записать сделку`;
           status.classList.add('hidden');
           return;
         }
@@ -1112,7 +1131,7 @@
           setTab('summary');
           loadData();
           btn.disabled = false;
-          btn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" /></svg> <span>Записать в таблицу</span>`;
+          btn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" /></svg> <span>Записать сделку</span>`;
           status.classList.add('hidden');
         }, 1200);
 
@@ -1120,7 +1139,7 @@
         status.innerText = "❌ Ошибка сохранения";
         status.className = "text-center text-xs text-rose-500 font-bold";
         btn.disabled = false;
-        btn.innerHTML = `Записать в таблицу`;
+        btn.innerHTML = `Записать сделку`;
       }
     }
 
