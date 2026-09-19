@@ -76,17 +76,22 @@
     .chart-bar:hover {
       filter: brightness(0.92);
     }
-    /* Скелетон мерцания (Shimmer) */
-    @keyframes shimmer {
-      0% { background-position: -200% 0; }
-      100% { background-position: 200% 0; }
+
+    /* ЯРКИЙ И ПЛАВНЫЙ СКЕЛЕТОН SHIMMER */
+    @keyframes shimmerWave {
+      0% { background-position: -250% 0; }
+      100% { background-position: 250% 0; }
     }
     .is-loading .shimmer-box {
-      background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%) !important;
-      background-size: 200% 100% !important;
-      animation: shimmer 1.5s infinite !important;
+      position: relative;
+      overflow: hidden;
       color: transparent !important;
-      border-radius: 0.6rem !important;
+      border-color: transparent !important;
+      border-radius: 0.55rem !important;
+      background: #e2e8f0 !important;
+      background-image: linear-gradient(90deg, #e2e8f0 0%, #ffffff 50%, #e2e8f0 100%) !important;
+      background-size: 250% 100% !important;
+      animation: shimmerWave 1.4s infinite cubic-bezier(0.4, 0, 0.2, 1) !important;
       user-select: none !important;
       pointer-events: none !important;
     }
@@ -122,7 +127,7 @@
       
       <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-stretch">
         
-        <!-- Темная премиальная карта баланса -->
+        <!-- Темная карта баланса -->
         <div class="dark-balance-card p-6 md:p-7 text-white relative overflow-hidden flex flex-col justify-between md:col-span-7">
           <div class="absolute -right-10 -top-10 w-44 h-44 bg-blue-500/15 rounded-full blur-2xl pointer-events-none"></div>
           
@@ -131,7 +136,7 @@
               <span>Всего на счетах (капитал)</span>
             </div>
 
-            <div id="val-worth" class="shimmer-box text-3xl md:text-4xl font-black mt-2 text-white tracking-tight inline-block">0,00 ₽</div>
+            <div id="val-worth" class="shimmer-box text-3xl md:text-4xl font-black mt-2 text-white tracking-tight inline-block min-w-[140px]">0,00 ₽</div>
 
             <div class="flex items-center gap-2 mt-3">
               <div id="badge-profit" class="shimmer-box flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-500/20 text-emerald-300 text-xs font-bold">
@@ -147,7 +152,7 @@
           <!-- Интерактивная плашка отложенного налога -->
           <div onclick="setTab('taxes')" class="mt-5 pt-3.5 border-t border-white/10 flex justify-between items-center text-xs cursor-pointer active:opacity-80 transition group">
             <div class="text-[11px] text-slate-300">
-              К выводу на карту: <b id="card-net-withdraw" class="text-white font-bold shimmer-box">0,00 ₽</b>
+              К выводу на карту: <b id="card-net-withdraw" class="text-white font-bold shimmer-box min-w-[70px] inline-block">0,00 ₽</b>
             </div>
             <div class="text-[11px] font-bold text-sky-300 flex items-center gap-0.5 group-hover:translate-x-0.5 transition">
               <span>Аудит налога</span>
@@ -158,22 +163,29 @@
           </div>
         </div>
 
-        <!-- Карточки: Вложено и Свободный кэш (БЕЗ ДУБЛЕЙ) -->
+        <!-- Подсвеченные карточки: «Вложено» и «Свободный кэш» (гармоничная пара) -->
         <div class="grid grid-cols-2 md:grid-cols-1 gap-3 md:col-span-5">
-          <div class="soft-card p-5 flex flex-col justify-center">
-            <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Всего вложено</div>
-            <div id="val-invested" class="shimmer-box text-lg md:text-xl font-black mt-1 text-slate-900 inline-block">0,00 ₽</div>
+          
+          <!-- Карточка «Всего вложено» с синей акцентной плашкой -->
+          <div class="soft-card p-5 flex flex-col justify-center border-l-4 border-l-blue-600">
+            <div class="flex justify-between items-center">
+              <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Всего вложено</span>
+              <span class="text-[9px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-bold border border-blue-200/60">в бумагах</span>
+            </div>
+            <div id="val-invested" class="shimmer-box text-lg md:text-xl font-black mt-1 text-slate-900 inline-block min-w-[100px]">0,00 ₽</div>
             <div class="text-[10px] text-slate-400 mt-1 font-medium">в акции и облигации</div>
           </div>
           
+          <!-- Карточка «Свободный кэш» с изумрудной акцентной плашкой -->
           <div class="soft-card p-5 flex flex-col justify-center border-l-4 border-l-emerald-500">
             <div class="flex justify-between items-center">
               <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Свободный кэш</span>
               <span class="text-[9px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold border border-emerald-200/60">на счете</span>
             </div>
-            <div id="val-summary-cash" class="shimmer-box text-lg md:text-xl font-black mt-1 text-emerald-600 inline-block">0,00 ₽</div>
+            <div id="val-summary-cash" class="shimmer-box text-lg md:text-xl font-black mt-1 text-emerald-600 inline-block min-w-[100px]">0,00 ₽</div>
             <div class="text-[10px] text-slate-400 mt-1 font-medium">рубли, готовые к покупкам</div>
           </div>
+
         </div>
 
       </div>
@@ -197,7 +209,7 @@
               </svg>
               <div class="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
                 <span class="text-[9px] uppercase font-bold text-slate-400">Капитал</span>
-                <span id="donut-center-val" class="shimmer-box text-xs font-black text-slate-900">0 ₽</span>
+                <span id="donut-center-val" class="shimmer-box text-xs font-black text-slate-900 inline-block">0 ₽</span>
               </div>
             </div>
 
@@ -208,8 +220,8 @@
                   <span class="text-slate-600 font-semibold">Акции</span>
                 </div>
                 <div class="text-right">
-                  <div id="stocks-pct-label" class="shimmer-box font-bold text-slate-900">0%</div>
-                  <div id="val-stocks-inv" class="shimmer-box text-[10px] text-slate-400 font-medium">0 ₽</div>
+                  <div id="stocks-pct-label" class="shimmer-box font-bold text-slate-900 min-w-[30px] inline-block">0%</div>
+                  <div id="val-stocks-inv" class="shimmer-box text-[10px] text-slate-400 font-medium min-w-[50px] inline-block">0 ₽</div>
                 </div>
               </div>
 
@@ -219,8 +231,8 @@
                   <span class="text-slate-600 font-semibold">Облигации</span>
                 </div>
                 <div class="text-right">
-                  <div id="bonds-pct-label" class="shimmer-box font-bold text-slate-900">0%</div>
-                  <div id="val-bonds-inv" class="shimmer-box text-[10px] text-slate-400 font-medium">0 ₽</div>
+                  <div id="bonds-pct-label" class="shimmer-box font-bold text-slate-900 min-w-[30px] inline-block">0%</div>
+                  <div id="val-bonds-inv" class="shimmer-box text-[10px] text-slate-400 font-medium min-w-[50px] inline-block">0 ₽</div>
                 </div>
               </div>
 
@@ -230,15 +242,15 @@
                   <span class="text-slate-600 font-semibold">Рубли (Кэш)</span>
                 </div>
                 <div class="text-right">
-                  <div id="cash-pct-label" class="shimmer-box font-bold text-slate-900">0%</div>
-                  <div id="val-cash-inv" class="shimmer-box text-[10px] text-slate-400 font-medium">0 ₽</div>
+                  <div id="cash-pct-label" class="shimmer-box font-bold text-slate-900 min-w-[30px] inline-block">0%</div>
+                  <div id="val-cash-inv" class="shimmer-box text-[10px] text-slate-400 font-medium min-w-[50px] inline-block">0 ₽</div>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Пассивный доход + Виджет ближайшей выплаты (Countdown) -->
+        <!-- Пассивный доход + Умный виджет Ближайшей выплаты -->
         <div class="soft-card p-5 space-y-3 flex flex-col justify-between">
           <div>
             <div class="flex justify-between items-center">
@@ -252,34 +264,34 @@
             <div class="grid grid-cols-2 gap-2 bg-slate-50 p-3 rounded-2xl border border-slate-100 mt-2.5">
               <div>
                 <div class="text-[10px] text-slate-400 font-semibold">В год купонами</div>
-                <div id="val-passive-year" class="shimmer-box text-sm font-black text-emerald-600 mt-0.5">+0,00 ₽</div>
+                <div id="val-passive-year" class="shimmer-box text-sm font-black text-emerald-600 mt-0.5 inline-block min-w-[80px]">+0,00 ₽</div>
               </div>
               <div>
                 <div class="text-[10px] text-slate-400 font-semibold">В среднем в месяц</div>
-                <div id="val-passive-month" class="shimmer-box text-sm font-black text-slate-900 mt-0.5">+0,00 ₽</div>
+                <div id="val-passive-month" class="shimmer-box text-sm font-black text-slate-900 mt-0.5 inline-block min-w-[80px]">+0,00 ₽</div>
               </div>
             </div>
 
-            <!-- 🔥 ВИДЖЕТ БЛИЖАЙШЕЙ ВЫПЛАТЫ (COUNTDOWN) -->
-            <div id="nearest-coupon-widget" class="mt-3 p-3 rounded-2xl bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border border-amber-300/40 space-y-2">
+            <!-- 🔥 ВИДЖЕТ БЛИЖАЙШЕЙ ВЫПЛАТЫ (ПОЯВЛЯЕТСЯ КОГДА ВЫПЛАТА СКОРО) -->
+            <div id="nearest-coupon-widget" class="hidden mt-3 p-3.5 rounded-2xl bg-amber-50/70 border border-amber-200/80 space-y-2">
               <div class="flex justify-between items-center">
                 <div class="flex items-center gap-1.5">
                   <span class="text-xs">🔔</span>
-                  <span id="nearest-coupon-title" class="text-xs font-bold text-amber-900">Ближайший купон</span>
+                  <span id="nearest-coupon-title" class="text-xs font-bold text-amber-950">Ближайший купон</span>
                 </div>
                 <span id="nearest-coupon-amount" class="text-xs font-black text-emerald-600">+0,00 ₽</span>
               </div>
-              <div class="w-full bg-amber-100 rounded-full h-1.5 overflow-hidden">
+              <div class="w-full bg-amber-200/60 rounded-full h-1.5 overflow-hidden">
                 <div id="nearest-coupon-bar" class="bg-gradient-to-r from-amber-500 to-emerald-500 h-1.5 rounded-full transition-all duration-700" style="width: 85%;"></div>
               </div>
-              <div class="flex justify-between text-[10px] text-amber-800 font-semibold">
+              <div class="flex justify-between text-[10px] text-amber-900 font-semibold">
                 <span id="nearest-coupon-bond">ОФЗ 26246</span>
-                <span id="nearest-coupon-days" class="font-extrabold text-amber-900">осталось 4 дня</span>
+                <span id="nearest-coupon-days" class="font-extrabold text-amber-950">осталось 4 дн.</span>
               </div>
             </div>
           </div>
 
-          <!-- Список ожидаемых выплат -->
+          <!-- Список ожидаемых выплат (БЕЗ ДУБЛИРОВАНИЯ БЛИЖАЙШЕГО КУПОНА!) -->
           <div class="space-y-1.5 pt-2">
             <div class="text-[11px] font-bold text-slate-400 uppercase">Ожидаемые выплаты</div>
             <div id="payouts-timeline" class="space-y-1.5 max-h-32 overflow-y-auto pr-1"></div>
@@ -289,7 +301,7 @@
       </div>
     </div>
 
-    <!-- ================= ЭКРАН 2: АНАЛИТИКА (СТОЛБИКИ ↔ ЛИНЕЙНЫЙ AREA CHART) ================= -->
+    <!-- ================= ЭКРАН 2: АНАЛИТИКА (УЛУЧШЕННЫЙ ГРАФИК) ================= -->
     <div id="tab-analytics" class="tab-view hidden space-y-4">
       
       <!-- Карточка: График «Стоимость портфеля» -->
@@ -301,12 +313,12 @@
           </div>
 
           <div class="flex items-center gap-1.5">
-            <!-- Тумблер: Столбики ↔ Линия -->
+            <!-- Переключатель: Столбики ↔ Линия -->
             <button onclick="toggleChartType()" id="btn-chart-type" class="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 flex items-center gap-1 transition active:scale-95">
               <span id="chart-type-text">📈 Линия</span>
             </button>
 
-            <!-- Тумблер: В рублях ↔ В процентах -->
+            <!-- Переключатель: В рублях ↔ В процентах -->
             <button onclick="toggleChartUnit()" id="btn-chart-unit" class="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 flex items-center gap-1 transition active:scale-95">
               <span id="chart-unit-text">В рублях</span>
               <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" /></svg>
@@ -321,27 +333,27 @@
           <button onclick="changeAnalyticsPeriod('year')" id="btn-p-year" class="text-slate-900 border-b-2 border-amber-400 pb-2 -mb-2 transition">Год</button>
         </div>
 
-        <!-- Область отрисовки: Столбики ИЛИ Векторная Линия (Area Chart) -->
-        <div class="pt-2 pb-1 relative min-h-[180px] flex flex-col justify-end">
+        <!-- Область отрисовки графика -->
+        <div class="pt-3 pb-1 relative min-h-[175px] flex flex-col justify-end">
           
-          <!-- Контейнер столбиков (активен в режиме 'bars') -->
+          <!-- Режим 1: Столбики -->
           <div id="chart-bars-mode" class="hidden">
-            <div id="bars-container" class="h-44 flex items-end justify-center gap-6 px-1 border-b border-slate-200"></div>
+            <div id="bars-container" class="h-40 flex items-end justify-center gap-6 px-1 border-b border-slate-200"></div>
             <div id="bars-labels" class="flex justify-center gap-6 text-[11px] font-semibold text-slate-400 pt-2 px-1"></div>
           </div>
 
-          <!-- Контейнер плавной линии Area Chart (активен в режиме 'area') -->
+          <!-- Режим 2: Плавная пропорциональная линия Area Chart -->
           <div id="chart-area-mode">
-            <div class="h-40 w-full relative">
-              <svg id="area-chart-svg" class="w-full h-full overflow-visible" viewBox="0 0 360 120" preserveAspectRatio="none">
+            <div class="h-36 w-full relative">
+              <svg id="area-chart-svg" class="w-full h-full overflow-visible" viewBox="0 0 360 110" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="#0284c7" stop-opacity="0.32" />
+                    <stop offset="0%" stop-color="#0284c7" stop-opacity="0.25" />
                     <stop offset="100%" stop-color="#0284c7" stop-opacity="0.0" />
                   </linearGradient>
                 </defs>
                 <path id="area-chart-fill" d="" fill="url(#areaGradient)" />
-                <path id="area-chart-stroke" d="" fill="none" stroke="#0284c7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                <path id="area-chart-stroke" d="" fill="none" stroke="#0284c7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
                 <g id="area-chart-dots"></g>
               </svg>
             </div>
@@ -368,7 +380,7 @@
               <span class="text-slate-600 font-semibold">Доходность</span>
               <div class="text-[10px] text-slate-400 font-medium">рыночный прирост активов</div>
             </div>
-            <span id="st-income" class="shimmer-box font-extrabold text-slate-900">0,00 ₽</span>
+            <span id="st-income" class="shimmer-box font-extrabold text-slate-900 min-w-[80px] inline-block text-right">0,00 ₽</span>
           </div>
 
           <div class="py-3 flex justify-between items-center">
@@ -376,7 +388,7 @@
               <span class="text-slate-600 font-semibold">Дивиденды</span>
               <div class="text-[10px] text-slate-400 font-medium">фактически получено на счет</div>
             </div>
-            <span id="st-divs" class="shimmer-box font-extrabold text-slate-900">0,00 ₽</span>
+            <span id="st-divs" class="shimmer-box font-extrabold text-slate-900 min-w-[60px] inline-block text-right">0,00 ₽</span>
           </div>
 
           <div class="py-3 flex justify-between items-center">
@@ -384,7 +396,7 @@
               <span class="text-slate-600 font-semibold">Купоны</span>
               <div id="st-coupons-sub" class="text-[10px] text-slate-400 font-medium">получено (в год: +0 ₽)</div>
             </div>
-            <span id="st-coupons" class="shimmer-box font-extrabold text-slate-900">0,00 ₽</span>
+            <span id="st-coupons" class="shimmer-box font-extrabold text-slate-900 min-w-[60px] inline-block text-right">0,00 ₽</span>
           </div>
 
           <div class="py-3 flex justify-between items-center">
@@ -392,7 +404,7 @@
               <span class="text-slate-600 font-semibold">Оборот</span>
               <div class="text-[10px] text-slate-400 font-medium">объем сделок с ценными бумагами</div>
             </div>
-            <span id="st-turnover" class="shimmer-box font-extrabold text-slate-900">0,00 ₽</span>
+            <span id="st-turnover" class="shimmer-box font-extrabold text-slate-900 min-w-[80px] inline-block text-right">0,00 ₽</span>
           </div>
 
           <div class="py-3 flex justify-between items-center">
@@ -400,7 +412,7 @@
               <span class="text-slate-600 font-semibold">Пополнения</span>
               <div class="text-[10px] text-slate-400 font-medium">всего внесено на брокерский счет</div>
             </div>
-            <span id="st-deposits" class="shimmer-box font-extrabold text-slate-900">0,00 ₽</span>
+            <span id="st-deposits" class="shimmer-box font-extrabold text-slate-900 min-w-[80px] inline-block text-right">0,00 ₽</span>
           </div>
 
           <div class="py-3 flex justify-between items-center">
@@ -408,7 +420,7 @@
               <span class="text-slate-600 font-semibold">Выводы</span>
               <div class="text-[10px] text-slate-400 font-medium">выведено на карту</div>
             </div>
-            <span id="st-withdrawals" class="shimmer-box font-extrabold text-slate-900">0,00 ₽</span>
+            <span id="st-withdrawals" class="shimmer-box font-extrabold text-slate-900 min-w-[60px] inline-block text-right">0,00 ₽</span>
           </div>
         </div>
       </div>
@@ -427,10 +439,10 @@
 
       <div class="dark-balance-card p-6 md:p-7 text-white relative overflow-hidden">
         <span class="text-[11px] font-semibold text-slate-300 uppercase tracking-wider">Чистыми к выводу прямо сейчас</span>
-        <div id="tax-val-net" class="shimmer-box text-3xl md:text-4xl font-black mt-1 text-emerald-400 tracking-tight">0,00 ₽</div>
+        <div id="tax-val-net" class="shimmer-box text-3xl md:text-4xl font-black mt-1 text-emerald-400 tracking-tight inline-block min-w-[140px]">0,00 ₽</div>
         <div class="mt-3 flex items-center justify-between text-xs pt-2 border-t border-white/10 text-slate-300">
           <span>Накопленный налог:</span>
-          <span id="tax-val-total" class="shimmer-box font-extrabold text-rose-400">-0,00 ₽</span>
+          <span id="tax-val-total" class="shimmer-box font-extrabold text-rose-400 min-w-[70px] inline-block text-right">-0,00 ₽</span>
         </div>
       </div>
 
@@ -446,11 +458,11 @@
           <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100 space-y-1 text-xs">
             <div class="flex justify-between">
               <span class="text-slate-500">Годовой купонный поток (100%):</span>
-              <span id="tax-bonds-gross" class="shimmer-box font-bold text-slate-900">0,00 ₽</span>
+              <span id="tax-bonds-gross" class="shimmer-box font-bold text-slate-900 min-w-[60px] inline-block text-right">0,00 ₽</span>
             </div>
             <div class="flex justify-between text-rose-600">
               <span>Налог 13% к списанию:</span>
-              <span id="tax-bonds-due" class="shimmer-box font-extrabold">-0,00 ₽</span>
+              <span id="tax-bonds-due" class="shimmer-box font-extrabold min-w-[60px] inline-block text-right">-0,00 ₽</span>
             </div>
           </div>
         </div>
@@ -466,11 +478,11 @@
           <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100 space-y-1 text-xs">
             <div class="flex justify-between">
               <span class="text-slate-500">Курсовой результат акций:</span>
-              <span id="tax-stocks-pnl" class="shimmer-box font-bold text-slate-900">0,00 ₽</span>
+              <span id="tax-stocks-pnl" class="shimmer-box font-bold text-slate-900 min-w-[60px] inline-block text-right">0,00 ₽</span>
             </div>
             <div class="flex justify-between">
               <span class="text-slate-500">Налог при закрытии:</span>
-              <span id="tax-stocks-due" class="shimmer-box font-extrabold text-slate-900">0,00 ₽</span>
+              <span id="tax-stocks-due" class="shimmer-box font-extrabold text-slate-900 min-w-[60px] inline-block text-right">0,00 ₽</span>
             </div>
           </div>
         </div>
@@ -488,7 +500,7 @@
       </div>
     </div>
 
-    <!-- ================= ЭКРАН 4: АКЦИИ (С ФИЛЬТРАМИ И СЕКТОРАМИ) ================= -->
+    <!-- ================= ЭКРАН 4: АКЦИИ ================= -->
     <div id="tab-stocks" class="tab-view hidden space-y-3">
       <div class="flex justify-between items-center px-1">
         <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Акции в портфеле</h2>
@@ -506,7 +518,7 @@
       <div id="stocks-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
     </div>
 
-    <!-- ================= ЭКРАН 5: ОБЛИГАЦИИ (С ФИЛЬТРАМИ) ================= -->
+    <!-- ================= ЭКРАН 5: ОБЛИГАЦИИ ================= -->
     <div id="tab-bonds" class="tab-view hidden space-y-3">
       <div class="flex justify-between items-center px-1">
         <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Облигации в портфеле</h2>
@@ -611,7 +623,7 @@
     </div>
   </div>
 
-  <!-- НИЖНЯЯ ПАНЕЛЬ НАВИГАЦИИ (FLOATING DOCK) -->
+  <!-- НИЖНЯЯ ПАНЕЛЬ НАВИГАЦИИ -->
   <nav class="fixed bottom-4 left-4 right-4 max-w-md md:max-w-xl mx-auto bg-slate-100/95 backdrop-blur-2xl rounded-3xl p-1.5 flex justify-between items-center z-50 shadow-xl shadow-slate-300/40 border border-slate-200/80">
     <button onclick="setTab('summary')" id="b-summary" class="nav-btn flex-1 py-2 rounded-2xl flex flex-col items-center gap-1 text-slate-500 font-bold text-[10px] tab-active">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -669,10 +681,10 @@
 
     let currentChartPeriod = 'year';
     let currentChartUnit = 'rub';
-    let currentChartType = 'area'; // 'area' или 'bars'
+    let currentChartType = 'area';
 
-    let stockSort = 'cost'; // 'cost', 'pnl', 'name'
-    let bondSort = 'cost';  // 'cost', 'yield', 'name'
+    let stockSort = 'cost';
+    let bondSort = 'cost';
 
     const BRAND_DOMAINS = {
       'SBER': 'sber.ru', 'SBERP': 'sber.ru', 'MTSS': 'mts.ru', 'SNGS': 'surgutneftegas.ru',
@@ -817,7 +829,6 @@
         </svg>`;
     }
 
-    // ================= СОРТИРОВКА АКЦИЙ И ОБЛИГАЦИЙ =================
     function setSortMode(assetType, mode) {
       triggerHaptic("light");
       if (assetType === 'stocks') {
@@ -837,7 +848,6 @@
       }
     }
 
-    // ================= ГРАФИК: ТУМБЛЕРЫ (РУБ/%, ЛИНИЯ/СТОЛБИКИ) =================
     function toggleChartUnit() {
       triggerHaptic("light");
       currentChartUnit = (currentChartUnit === 'rub') ? 'pct' : 'rub';
@@ -913,7 +923,7 @@
       const sign = periodPnl >= 0 ? '+' : '';
       const incomeEl = document.getElementById('st-income');
       incomeEl.innerText = `${sign}${formatRub(periodPnl)} (${sign}${periodYield.toFixed(2)}%)`;
-      incomeEl.className = periodPnl >= 0 ? "font-extrabold text-emerald-600" : "font-extrabold text-rose-600";
+      incomeEl.className = periodPnl >= 0 ? "shimmer-box font-extrabold text-emerald-600 min-w-[80px] inline-block text-right" : "shimmer-box font-extrabold text-rose-600 min-w-[80px] inline-block text-right";
 
       let periodDivs = 0;
       globalDivsLog.forEach(d => {
@@ -948,6 +958,7 @@
       document.getElementById('st-withdrawals').innerText = formatRub(periodWithdrawals);
     }
 
+    // ================= ПЛАВНЫЙ ПРОПОРЦИОНАЛЬНЫЙ ГРАФИК =================
     function renderAnalyticsChart(period = 'year') {
       const s = globalSummary || {};
       const curWorth = Number(s.totalWorth) || 19602.79;
@@ -968,12 +979,13 @@
           { label: "19 сен", valRub: curWorth, valPct: curYield, info: "Сегодня", isToday: true }
         ];
       } else {
+        // Строго завершенные месяцы с момента открытия (Сентябрь 2026)
         points = [
           { label: "Сен", valRub: curWorth, valPct: curYield, info: "Сен 2026 (текущий месяц)", isToday: true }
         ];
       }
 
-      // 1. Отрисовка столбиков (Bars)
+      // 1. Отрисовка столбиков
       const bContainer = document.getElementById('bars-container');
       const bLabelsEl = document.getElementById('bars-labels');
       if (bContainer && bLabelsEl) {
@@ -982,7 +994,7 @@
         const maxVal = Math.max(...points.map(p => p.valRub), 1);
 
         points.forEach((p, idx) => {
-          const heightPct = Math.max(25, Math.min(96, Math.round((p.valRub / maxVal) * 90)));
+          const heightPct = Math.max(30, Math.min(96, Math.round((p.valRub / maxVal) * 90)));
           const isSelected = p.isToday || (idx === points.length - 1);
           const barColor = isSelected ? 'bg-sky-500' : 'bg-sky-400/70 hover:bg-sky-500';
 
@@ -1006,7 +1018,7 @@
         });
       }
 
-      // 2. Отрисовка векторного линейного Area Chart
+      // 2. Отрисовка плавной пропорциональной линии Area Chart (без преувеличенного падения)
       const areaFill = document.getElementById('area-chart-fill');
       const areaStroke = document.getElementById('area-chart-stroke');
       const areaDots = document.getElementById('area-chart-dots');
@@ -1018,16 +1030,23 @@
 
         const W = 360;
         const H = 100;
-        const paddingX = 30;
         const count = points.length;
 
-        const maxVal = Math.max(...points.map(p => p.valRub));
-        const minVal = Math.min(...points.map(p => p.valRub)) * 0.995;
-        const range = (maxVal - minVal) || 1;
+        const maxRaw = Math.max(...points.map(p => p.valRub));
+        const minRaw = Math.min(...points.map(p => p.valRub));
 
+        // Добавляем пропорциональный запас (Headroom), чтобы 1.8% падение не выглядело как обвал в 90%
+        const rawDiff = (maxRaw - minRaw);
+        const minBuffer = maxRaw * 0.05; // минимум 5% визуального диапазона
+        const actualRange = Math.max(rawDiff, minBuffer);
+        const baselineMin = minRaw - actualRange * 0.3;
+        const baselineMax = maxRaw + actualRange * 0.3;
+        const range = (baselineMax - baselineMin);
+
+        const paddingX = 40;
         const coords = points.map((p, i) => {
           const x = count === 1 ? (W / 2) : (paddingX + (i / (count - 1)) * (W - 2 * paddingX));
-          const y = H - ((p.valRub - minVal) / range) * (H - 25) - 15;
+          const y = H - ((p.valRub - baselineMin) / range) * (H - 25) - 15;
           return { x, y, p };
         });
 
@@ -1036,31 +1055,39 @@
 
         if (coords.length === 1) {
           const c = coords[0];
-          strokeD = `M ${c.x - 40} ${c.y} L ${c.x + 40} ${c.y}`;
-          fillD = `M ${c.x - 40} 120 L ${c.x - 40} ${c.y} L ${c.x + 40} ${c.y} L ${c.x + 40} 120 Z`;
+          strokeD = `M ${c.x - 45} ${c.y} L ${c.x + 45} ${c.y}`;
+          fillD = `M ${c.x - 45} 110 L ${c.x - 45} ${c.y} L ${c.x + 45} ${c.y} L ${c.x + 45} 110 Z`;
+        } else if (coords.length === 2) {
+          strokeD = `M ${coords[0].x} ${coords[0].y} L ${coords[1].x} ${coords[1].y}`;
+          fillD = `M ${coords[0].x} 110 L ${coords[0].x} ${coords[0].y} L ${coords[1].x} ${coords[1].y} L ${coords[1].x} 110 Z`;
         } else {
+          // Плавная пропорциональная кривая (Monotone cubic spline)
           strokeD = `M ${coords[0].x} ${coords[0].y}`;
           for (let i = 1; i < coords.length; i++) {
-            const prev = coords[i - 1];
-            const curr = coords[i];
-            const midX = (prev.x + curr.x) / 2;
-            strokeD += ` C ${midX} ${prev.y}, ${midX} ${curr.y}, ${curr.x} ${curr.y}`;
+            const p0 = coords[i - 1];
+            const p1 = coords[i];
+            const cp1x = p0.x + (p1.x - p0.x) * 0.5;
+            const cp1y = p0.y;
+            const cp2x = p0.x + (p1.x - p0.x) * 0.5;
+            const cp2y = p1.y;
+            strokeD += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p1.x} ${p1.y}`;
           }
-          fillD = strokeD + ` L ${coords[coords.length - 1].x} 120 L ${coords[0].x} 120 Z`;
+          fillD = strokeD + ` L ${coords[coords.length - 1].x} 110 L ${coords[0].x} 110 Z`;
         }
 
         areaStroke.setAttribute('d', strokeD);
         areaFill.setAttribute('d', fillD);
 
+        // Аккуратные точки (r="3.5" вместо огромных кругов)
         coords.forEach((c) => {
           const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
           circle.setAttribute('cx', c.x);
           circle.setAttribute('cy', c.y);
-          circle.setAttribute('r', '5');
+          circle.setAttribute('r', '3.8');
           circle.setAttribute('fill', '#ffffff');
           circle.setAttribute('stroke', '#0284c7');
-          circle.setAttribute('stroke-width', '3');
-          circle.setAttribute('class', 'cursor-pointer hover:r-7 transition-all');
+          circle.setAttribute('stroke-width', '2.2');
+          circle.setAttribute('class', 'cursor-pointer hover:r-5 transition-all');
           circle.onclick = () => {
             triggerHaptic("light");
             const valStr = (currentChartUnit === 'rub') ? formatRub(c.p.valRub) : (c.p.valPct >= 0 ? '+' : '') + c.p.valPct.toFixed(2) + '%';
@@ -1082,7 +1109,7 @@
       document.getElementById('chart-selected-info').innerText = `${selectedPoint.info}: ${valStr}`;
     }
 
-    // ================= СПИСКИ АКЦИЙ И ОБЛИГАЦИЙ (С СОРТИРОВКОЙ) =================
+    // ================= СПИСКИ АКЦИЙ И ОБЛИГАЦИЙ =================
     function renderStocksList() {
       const sl = document.getElementById('stocks-list');
       if (!sl) return;
@@ -1274,124 +1301,12 @@
       });
     }
 
-    function groupStocks(rawStocks) {
-      const map = new Map();
-      rawStocks.forEach(st => {
-        const key = st.ticker.trim().toUpperCase();
-        if (!map.has(key)) {
-          map.set(key, {
-            ticker: key,
-            buyDate: st.buyDate || '',
-            quantity: 0,
-            invested: 0,
-            curPrice: Number(st.curPrice) || Number(st.buyPrice) || 0
-          });
-        }
-        const item = map.get(key);
-        const qty = Number(st.quantity) || 0;
-        const buyPrice = Number(st.buyPrice) || 0;
-        const inv = Number(st.invested) || (qty * buyPrice);
-
-        item.quantity += qty;
-        item.invested += inv;
-        if (st.curPrice && Number(st.curPrice) > 0) item.curPrice = Number(st.curPrice);
-        if (!item.buyDate && st.buyDate) item.buyDate = st.buyDate;
-      });
-
-      const result = [];
-      map.forEach(item => {
-        const avgBuyPrice = item.quantity > 0 ? (item.invested / item.quantity) : 0;
-        const curCost = item.quantity * (item.curPrice || avgBuyPrice);
-        const pnl = curCost - item.invested;
-        const pnlPct = item.invested > 0 ? ((pnl / item.invested) * 100) : 0;
-
-        result.push({
-          ticker: item.ticker,
-          buyDate: item.buyDate,
-          quantity: item.quantity,
-          avgBuyPrice: avgBuyPrice,
-          curPrice: item.curPrice || avgBuyPrice,
-          curCost: curCost,
-          invested: item.invested,
-          pnl: pnl,
-          pnlPct: pnlPct
-        });
-      });
-      return result;
-    }
-
-    function groupBonds(rawBonds) {
-      const map = new Map();
-      rawBonds.forEach(bd => {
-        const key = bd.name.trim();
-        if (!map.has(key)) {
-          map.set(key, {
-            name: key,
-            buyDate: bd.buyDate || '',
-            matDate: bd.matDate || '',
-            nextCoupon: bd.nextCoupon || '',
-            quantity: 0,
-            totalCostOnly: 0,
-            totalSpent: 0,
-            curCost: 0,
-            curPrice: Number(bd.curPrice) || Number(bd.buyPrice) || 0,
-            coupon: Number(bd.coupon) || 0,
-            yearCouponTotal: 0
-          });
-        }
-        const item = map.get(key);
-        const qty = Number(bd.quantity) || 0;
-        const buyPrice = Number(bd.buyPrice) || 0;
-        const spent = Number(bd.totalSpent) || (buyPrice * qty);
-        const curCost = Number(bd.curCost) || spent;
-
-        item.quantity += qty;
-        item.totalCostOnly += (buyPrice * qty);
-        item.totalSpent += spent;
-        item.curCost += curCost;
-        if (bd.curPrice) item.curPrice = Number(bd.curPrice);
-        if (bd.coupon) item.coupon = Number(bd.coupon);
-        if (bd.matDate) item.matDate = bd.matDate;
-        if (bd.nextCoupon) item.nextCoupon = bd.nextCoupon;
-        if (!item.buyDate && bd.buyDate) item.buyDate = bd.buyDate;
-
-        const yearCoupon = Number(bd.yearCoupon) || (item.coupon * 2 * qty);
-        item.yearCouponTotal += yearCoupon;
-      });
-
-      const result = [];
-      map.forEach(item => {
-        const avgBuyPrice = item.quantity > 0 ? (item.totalCostOnly / item.quantity) : 0;
-        const yieldRate = item.totalSpent > 0 ? ((item.yearCouponTotal / item.totalSpent) * 100) : 0;
-        const pnl = item.curCost - item.totalSpent;
-        const pnlPct = item.totalSpent > 0 ? ((pnl / item.totalSpent) * 100) : 0;
-
-        result.push({
-          name: item.name,
-          buyDate: item.buyDate,
-          matDate: item.matDate,
-          nextCoupon: item.nextCoupon,
-          quantity: item.quantity,
-          avgBuyPrice: avgBuyPrice,
-          curPrice: item.curPrice || avgBuyPrice,
-          coupon: item.coupon,
-          totalSpent: item.totalSpent,
-          curCost: item.curCost,
-          pnl: pnl,
-          pnlPct: pnlPct,
-          yearCouponTotal: item.yearCouponTotal,
-          yieldRate: yieldRate
-        });
-      });
-      return result;
-    }
-
     async function loadData(manual = false) {
       if (manual) triggerHaptic("light");
       const icon = document.getElementById('refresh-icon');
       if (icon) icon.classList.add('animate-spin');
 
-      // Активируем скелетон Shimmer
+      // Активация плавного мерцания скелетона
       document.getElementById('app-body').classList.add('is-loading');
 
       try {
@@ -1453,11 +1368,8 @@
         donutCash.setAttribute('stroke-dasharray', `${cDash} ${C - cDash}`);
         donutCash.setAttribute('stroke-dashoffset', `-${sDash + bDash}`);
 
-        // Пассивный доход и Виджет ближайшей выплаты
+        // ================= ПАССИВНЫЙ ДОХОД И ДЕДУПЛИКАЦИЯ КУПОНОВ =================
         let totalYearCoupon = 0;
-        const timelineEl = document.getElementById('payouts-timeline');
-        timelineEl.innerHTML = '';
-
         let nearestCouponBond = null;
         let minDaysToCoupon = 9999;
 
@@ -1466,7 +1378,7 @@
           const singlePayout = (bd.coupon * bd.quantity);
           const couponInfo = formatCouponDate(bd.nextCoupon);
 
-          if (couponInfo && couponInfo.days >= 0 && couponInfo.days < minDaysToCoupon) {
+          if (couponInfo && couponInfo.isSoon && couponInfo.days >= 0 && couponInfo.days < minDaysToCoupon) {
             minDaysToCoupon = couponInfo.days;
             nearestCouponBond = {
               name: bd.name,
@@ -1475,40 +1387,73 @@
               text: couponInfo.text
             };
           }
-
-          let dateHtml = `<span class="text-slate-500 font-medium">2 выплаты в год</span>`;
-          if (couponInfo) {
-            if (couponInfo.isSoon) {
-              dateHtml = `<span class="px-2 py-0.5 rounded-lg bg-amber-100 text-amber-800 font-extrabold text-[10px] border border-amber-200/60">🔔 ${couponInfo.text}</span>`;
-            } else {
-              dateHtml = `<span class="text-slate-600 font-semibold text-[10px]">Ближайшая: ${couponInfo.text}</span>`;
-            }
-          }
-
-          timelineEl.innerHTML += `
-            <div class="flex justify-between items-center bg-slate-50 p-2.5 rounded-2xl border border-slate-100 text-xs">
-              <div>
-                <div class="font-bold text-slate-900">${bd.name}</div>
-                <div class="mt-0.5">${dateHtml}</div>
-              </div>
-              <div class="text-right">
-                <div class="font-black text-emerald-600">+${formatRub(singlePayout)}</div>
-                <div class="text-[10px] text-slate-400 font-medium">за выплату</div>
-              </div>
-            </div>`;
         });
 
-        // Заполнение виджета Countdown
+        const nearestWidgetEl = document.getElementById('nearest-coupon-widget');
+        const timelineEl = document.getElementById('payouts-timeline');
+        timelineEl.innerHTML = '';
+
         if (nearestCouponBond) {
+          // Показываем верхний виджет
+          nearestWidgetEl.classList.remove('hidden');
           document.getElementById('nearest-coupon-bond').innerText = nearestCouponBond.name;
           document.getElementById('nearest-coupon-amount').innerText = `+${formatRub(nearestCouponBond.amount)}`;
           document.getElementById('nearest-coupon-days').innerText = `осталось ${nearestCouponBond.days} дн. (${nearestCouponBond.text})`;
-          const progressPct = Math.max(10, Math.min(98, Math.round(((182 - nearestCouponBond.days) / 182) * 100)));
+          const progressPct = Math.max(12, Math.min(98, Math.round(((182 - nearestCouponBond.days) / 182) * 100)));
           document.getElementById('nearest-coupon-bar').style.width = `${progressPct}%`;
-        }
 
-        if (groupedBonds.length === 0) {
-          timelineEl.innerHTML = `<div class="text-[11px] text-slate-400 text-center py-2">Облигаций пока нет</div>`;
+          // ИСКЛЮЧАЕМ эту облигацию из нижнего списка, чтобы не дублировать!
+          const otherBonds = groupedBonds.filter(bd => bd.name !== nearestCouponBond.name);
+
+          if (otherBonds.length > 0) {
+            otherBonds.forEach(bd => {
+              const singlePayout = (bd.coupon * bd.quantity);
+              const couponInfo = formatCouponDate(bd.nextCoupon);
+              let dateHtml = `<span class="text-slate-500 font-medium">2 выплаты в год</span>`;
+              if (couponInfo) dateHtml = `<span class="text-slate-600 font-semibold text-[10px]">Ближайшая: ${couponInfo.text}</span>`;
+
+              timelineEl.innerHTML += `
+                <div class="flex justify-between items-center bg-slate-50 p-2.5 rounded-2xl border border-slate-100 text-xs">
+                  <div>
+                    <div class="font-bold text-slate-900">${bd.name}</div>
+                    <div class="mt-0.5">${dateHtml}</div>
+                  </div>
+                  <div class="text-right">
+                    <div class="font-black text-emerald-600">+${formatRub(singlePayout)}</div>
+                    <div class="text-[10px] text-slate-400 font-medium">за выплату</div>
+                  </div>
+                </div>`;
+            });
+          } else {
+            timelineEl.innerHTML = `<div class="text-[11px] text-slate-400 text-center py-2">Все ближайшие выплаты учтены выше</div>`;
+          }
+
+        } else {
+          // Если скорых выплат нет — скрываем верхний баннер и показываем весь список обычным образом
+          nearestWidgetEl.classList.add('hidden');
+
+          if (groupedBonds.length > 0) {
+            groupedBonds.forEach(bd => {
+              const singlePayout = (bd.coupon * bd.quantity);
+              const couponInfo = formatCouponDate(bd.nextCoupon);
+              let dateHtml = `<span class="text-slate-500 font-medium">2 выплаты в год</span>`;
+              if (couponInfo) dateHtml = `<span class="text-slate-600 font-semibold text-[10px]">Ближайшая: ${couponInfo.text}</span>`;
+
+              timelineEl.innerHTML += `
+                <div class="flex justify-between items-center bg-slate-50 p-2.5 rounded-2xl border border-slate-100 text-xs">
+                  <div>
+                    <div class="font-bold text-slate-900">${bd.name}</div>
+                    <div class="mt-0.5">${dateHtml}</div>
+                  </div>
+                  <div class="text-right">
+                    <div class="font-black text-emerald-600">+${formatRub(singlePayout)}</div>
+                    <div class="text-[10px] text-slate-400 font-medium">за выплату</div>
+                  </div>
+                </div>`;
+            });
+          } else {
+            timelineEl.innerHTML = `<div class="text-[11px] text-slate-400 text-center py-2">Облигаций пока нет</div>`;
+          }
         }
 
         document.getElementById('val-passive-year').innerText = '+' + formatRub(totalYearCoupon);
@@ -1593,10 +1538,9 @@
         console.error("Ошибка загрузки:", err);
       } finally {
         if (icon) icon.classList.remove('animate-spin');
-        // Отключаем скелетон
         setTimeout(() => {
           document.getElementById('app-body').classList.remove('is-loading');
-        }, 150);
+        }, 120);
       }
     }
 
