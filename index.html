@@ -17,20 +17,20 @@
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
     body {
-      background-color: #f4f6fb;
+      background: #f5f7fb;
       color: #0f172a;
     }
     .soft-card {
       background: #ffffff;
-      border-radius: 1.5rem;
-      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
-      border: 1px solid rgba(226, 232, 240, 0.9);
-      transition: all 0.25s ease;
+      border-radius: 1.65rem;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.02), 0 10px 28px -6px rgba(15, 23, 42, 0.045);
+      border: 1px solid rgba(226, 232, 240, 0.85);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .dark-balance-card {
-      background: linear-gradient(135deg, #0b1329 0%, #15203b 50%, #1b2a4e 100%);
-      border-radius: 1.75rem;
-      box-shadow: 0 20px 35px -10px rgba(11, 19, 41, 0.35);
+      background: linear-gradient(135deg, #090e1a 0%, #111a2e 55%, #182642 100%);
+      border-radius: 1.85rem;
+      box-shadow: 0 20px 38px -12px rgba(9, 14, 26, 0.42);
       border: 1px solid rgba(255, 255, 255, 0.12);
     }
     .soft-input {
@@ -43,15 +43,15 @@
       outline: none;
       border-color: #2563eb;
       background: #ffffff;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
     }
     .nav-btn {
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .nav-btn.tab-active {
-      background-color: #ffffff;
+      background: #ffffff;
       color: #1e3a8a;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
       transform: translateY(-2px);
     }
     .donut-ring {
@@ -64,7 +64,7 @@
       opacity: 0;
     }
     .accordion-open .accordion-body {
-      max-height: 500px;
+      max-height: 550px;
       opacity: 1;
     }
     .accordion-open .accordion-chevron {
@@ -76,9 +76,26 @@
     .chart-bar:hover {
       filter: brightness(0.92);
     }
+    /* Скелетон мерцания (Shimmer) */
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    .is-loading .shimmer-box {
+      background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%) !important;
+      background-size: 200% 100% !important;
+      animation: shimmer 1.5s infinite !important;
+      color: transparent !important;
+      border-radius: 0.6rem !important;
+      user-select: none !important;
+      pointer-events: none !important;
+    }
+    .is-loading .shimmer-box * {
+      opacity: 0 !important;
+    }
   </style>
 </head>
-<body class="pb-32 select-none antialiased min-h-screen">
+<body id="app-body" class="pb-32 select-none antialiased min-h-screen">
   
   <div class="px-4 py-3 max-w-md md:max-w-3xl lg:max-w-4xl mx-auto space-y-4">
 
@@ -105,32 +122,32 @@
       
       <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-stretch">
         
-        <!-- Главная карточка баланса -->
+        <!-- Темная премиальная карта баланса -->
         <div class="dark-balance-card p-6 md:p-7 text-white relative overflow-hidden flex flex-col justify-between md:col-span-7">
-          <div class="absolute -right-10 -top-10 w-40 h-40 bg-blue-500/15 rounded-full blur-2xl pointer-events-none"></div>
+          <div class="absolute -right-10 -top-10 w-44 h-44 bg-blue-500/15 rounded-full blur-2xl pointer-events-none"></div>
           
           <div>
             <div class="text-xs font-semibold text-slate-300">
               <span>Всего на счетах (капитал)</span>
             </div>
 
-            <div id="val-worth" class="text-3xl md:text-4xl font-black mt-2 text-white tracking-tight">0,00 ₽</div>
+            <div id="val-worth" class="shimmer-box text-3xl md:text-4xl font-black mt-2 text-white tracking-tight inline-block">0,00 ₽</div>
 
             <div class="flex items-center gap-2 mt-3">
-              <div id="badge-profit" class="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-500/20 text-emerald-300 text-xs font-bold">
+              <div id="badge-profit" class="shimmer-box flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-500/20 text-emerald-300 text-xs font-bold">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                 </svg>
                 <span id="val-income">+0,00 ₽</span>
               </div>
-              <span id="val-yield" class="text-xs font-bold text-slate-300 bg-white/10 px-2.5 py-1 rounded-xl">+0.00%</span>
+              <span id="val-yield" class="shimmer-box text-xs font-bold text-slate-300 bg-white/10 px-2.5 py-1 rounded-xl">+0.00%</span>
             </div>
           </div>
 
           <!-- Интерактивная плашка отложенного налога -->
           <div onclick="setTab('taxes')" class="mt-5 pt-3.5 border-t border-white/10 flex justify-between items-center text-xs cursor-pointer active:opacity-80 transition group">
             <div class="text-[11px] text-slate-300">
-              К выводу на карту: <b id="card-net-withdraw" class="text-white font-bold">0,00 ₽</b>
+              К выводу на карту: <b id="card-net-withdraw" class="text-white font-bold shimmer-box">0,00 ₽</b>
             </div>
             <div class="text-[11px] font-bold text-sky-300 flex items-center gap-0.5 group-hover:translate-x-0.5 transition">
               <span>Аудит налога</span>
@@ -141,21 +158,21 @@
           </div>
         </div>
 
-        <!-- Карточки: Вложено в активы и Свободный кэш -->
+        <!-- Карточки: Вложено и Свободный кэш (БЕЗ ДУБЛЕЙ) -->
         <div class="grid grid-cols-2 md:grid-cols-1 gap-3 md:col-span-5">
           <div class="soft-card p-5 flex flex-col justify-center">
             <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Всего вложено</div>
-            <div id="val-invested" class="text-lg md:text-xl font-black mt-1 text-slate-900">0,00 ₽</div>
-            <div class="text-[10px] text-slate-400 mt-1">в акции и облигации</div>
+            <div id="val-invested" class="shimmer-box text-lg md:text-xl font-black mt-1 text-slate-900 inline-block">0,00 ₽</div>
+            <div class="text-[10px] text-slate-400 mt-1 font-medium">в акции и облигации</div>
           </div>
           
           <div class="soft-card p-5 flex flex-col justify-center border-l-4 border-l-emerald-500">
             <div class="flex justify-between items-center">
               <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Свободный кэш</span>
-              <span class="text-[9px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold">на счете</span>
+              <span class="text-[9px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold border border-emerald-200/60">на счете</span>
             </div>
-            <div id="val-summary-cash" class="text-lg md:text-xl font-black mt-1 text-emerald-600">0,00 ₽</div>
-            <div class="text-[10px] text-slate-400 mt-1">свободные рубли для покупок</div>
+            <div id="val-summary-cash" class="shimmer-box text-lg md:text-xl font-black mt-1 text-emerald-600 inline-block">0,00 ₽</div>
+            <div class="text-[10px] text-slate-400 mt-1 font-medium">рубли, готовые к покупкам</div>
           </div>
         </div>
 
@@ -180,7 +197,7 @@
               </svg>
               <div class="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
                 <span class="text-[9px] uppercase font-bold text-slate-400">Капитал</span>
-                <span id="donut-center-val" class="text-xs font-black text-slate-900">0 ₽</span>
+                <span id="donut-center-val" class="shimmer-box text-xs font-black text-slate-900">0 ₽</span>
               </div>
             </div>
 
@@ -191,8 +208,8 @@
                   <span class="text-slate-600 font-semibold">Акции</span>
                 </div>
                 <div class="text-right">
-                  <div id="stocks-pct-label" class="font-bold text-slate-900">0%</div>
-                  <div id="val-stocks-inv" class="text-[10px] text-slate-400 font-medium">0 ₽</div>
+                  <div id="stocks-pct-label" class="shimmer-box font-bold text-slate-900">0%</div>
+                  <div id="val-stocks-inv" class="shimmer-box text-[10px] text-slate-400 font-medium">0 ₽</div>
                 </div>
               </div>
 
@@ -202,8 +219,8 @@
                   <span class="text-slate-600 font-semibold">Облигации</span>
                 </div>
                 <div class="text-right">
-                  <div id="bonds-pct-label" class="font-bold text-slate-900">0%</div>
-                  <div id="val-bonds-inv" class="text-[10px] text-slate-400 font-medium">0 ₽</div>
+                  <div id="bonds-pct-label" class="shimmer-box font-bold text-slate-900">0%</div>
+                  <div id="val-bonds-inv" class="shimmer-box text-[10px] text-slate-400 font-medium">0 ₽</div>
                 </div>
               </div>
 
@@ -213,15 +230,15 @@
                   <span class="text-slate-600 font-semibold">Рубли (Кэш)</span>
                 </div>
                 <div class="text-right">
-                  <div id="cash-pct-label" class="font-bold text-slate-900">0%</div>
-                  <div id="val-cash-inv" class="text-[10px] text-slate-400 font-medium">0 ₽</div>
+                  <div id="cash-pct-label" class="shimmer-box font-bold text-slate-900">0%</div>
+                  <div id="val-cash-inv" class="shimmer-box text-[10px] text-slate-400 font-medium">0 ₽</div>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Пассивный доход -->
+        <!-- Пассивный доход + Виджет ближайшей выплаты (Countdown) -->
         <div class="soft-card p-5 space-y-3 flex flex-col justify-between">
           <div>
             <div class="flex justify-between items-center">
@@ -231,28 +248,48 @@
               </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-2 bg-slate-50 p-3 rounded-2xl border border-slate-100 mt-3">
+            <!-- Годовой и месячный темп -->
+            <div class="grid grid-cols-2 gap-2 bg-slate-50 p-3 rounded-2xl border border-slate-100 mt-2.5">
               <div>
                 <div class="text-[10px] text-slate-400 font-semibold">В год купонами</div>
-                <div id="val-passive-year" class="text-sm font-black text-emerald-600 mt-0.5">+0,00 ₽</div>
+                <div id="val-passive-year" class="shimmer-box text-sm font-black text-emerald-600 mt-0.5">+0,00 ₽</div>
               </div>
               <div>
                 <div class="text-[10px] text-slate-400 font-semibold">В среднем в месяц</div>
-                <div id="val-passive-month" class="text-sm font-black text-slate-900 mt-0.5">+0,00 ₽</div>
+                <div id="val-passive-month" class="shimmer-box text-sm font-black text-slate-900 mt-0.5">+0,00 ₽</div>
+              </div>
+            </div>
+
+            <!-- 🔥 ВИДЖЕТ БЛИЖАЙШЕЙ ВЫПЛАТЫ (COUNTDOWN) -->
+            <div id="nearest-coupon-widget" class="mt-3 p-3 rounded-2xl bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border border-amber-300/40 space-y-2">
+              <div class="flex justify-between items-center">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-xs">🔔</span>
+                  <span id="nearest-coupon-title" class="text-xs font-bold text-amber-900">Ближайший купон</span>
+                </div>
+                <span id="nearest-coupon-amount" class="text-xs font-black text-emerald-600">+0,00 ₽</span>
+              </div>
+              <div class="w-full bg-amber-100 rounded-full h-1.5 overflow-hidden">
+                <div id="nearest-coupon-bar" class="bg-gradient-to-r from-amber-500 to-emerald-500 h-1.5 rounded-full transition-all duration-700" style="width: 85%;"></div>
+              </div>
+              <div class="flex justify-between text-[10px] text-amber-800 font-semibold">
+                <span id="nearest-coupon-bond">ОФЗ 26246</span>
+                <span id="nearest-coupon-days" class="font-extrabold text-amber-900">осталось 4 дня</span>
               </div>
             </div>
           </div>
 
+          <!-- Список ожидаемых выплат -->
           <div class="space-y-1.5 pt-2">
             <div class="text-[11px] font-bold text-slate-400 uppercase">Ожидаемые выплаты</div>
-            <div id="payouts-timeline" class="space-y-1.5 max-h-36 overflow-y-auto pr-1"></div>
+            <div id="payouts-timeline" class="space-y-1.5 max-h-32 overflow-y-auto pr-1"></div>
           </div>
         </div>
 
       </div>
     </div>
 
-    <!-- ================= ЭКРАН 2: АНАЛИТИКА (ТОЧНЫЙ ОТСЧЁТ) ================= -->
+    <!-- ================= ЭКРАН 2: АНАЛИТИКА (СТОЛБИКИ ↔ ЛИНЕЙНЫЙ AREA CHART) ================= -->
     <div id="tab-analytics" class="tab-view hidden space-y-4">
       
       <!-- Карточка: График «Стоимость портфеля» -->
@@ -263,11 +300,18 @@
             <p id="chart-start-label" class="text-[10px] text-slate-400 font-medium">Отсчёт с даты первой покупки</p>
           </div>
 
-          <!-- Переключатель (В рублях ↔ В процентах) -->
-          <button onclick="toggleChartUnit()" id="btn-chart-unit" class="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 flex items-center gap-1 transition active:scale-95">
-            <span id="chart-unit-text">В рублях</span>
-            <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" /></svg>
-          </button>
+          <div class="flex items-center gap-1.5">
+            <!-- Тумблер: Столбики ↔ Линия -->
+            <button onclick="toggleChartType()" id="btn-chart-type" class="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 flex items-center gap-1 transition active:scale-95">
+              <span id="chart-type-text">📈 Линия</span>
+            </button>
+
+            <!-- Тумблер: В рублях ↔ В процентах -->
+            <button onclick="toggleChartUnit()" id="btn-chart-unit" class="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 flex items-center gap-1 transition active:scale-95">
+              <span id="chart-unit-text">В рублях</span>
+              <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" /></svg>
+            </button>
+          </div>
         </div>
 
         <!-- Переключатели периодов -->
@@ -277,10 +321,33 @@
           <button onclick="changeAnalyticsPeriod('year')" id="btn-p-year" class="text-slate-900 border-b-2 border-amber-400 pb-2 -mb-2 transition">Год</button>
         </div>
 
-        <!-- Честный график: только наступившие/завершенные периоды -->
-        <div class="pt-3 pb-1">
-          <div id="bars-container" class="h-44 flex items-end justify-center gap-6 px-1 border-b border-slate-200"></div>
-          <div id="bars-labels" class="flex justify-center gap-6 text-[11px] font-semibold text-slate-400 pt-2 px-1"></div>
+        <!-- Область отрисовки: Столбики ИЛИ Векторная Линия (Area Chart) -->
+        <div class="pt-2 pb-1 relative min-h-[180px] flex flex-col justify-end">
+          
+          <!-- Контейнер столбиков (активен в режиме 'bars') -->
+          <div id="chart-bars-mode" class="hidden">
+            <div id="bars-container" class="h-44 flex items-end justify-center gap-6 px-1 border-b border-slate-200"></div>
+            <div id="bars-labels" class="flex justify-center gap-6 text-[11px] font-semibold text-slate-400 pt-2 px-1"></div>
+          </div>
+
+          <!-- Контейнер плавной линии Area Chart (активен в режиме 'area') -->
+          <div id="chart-area-mode">
+            <div class="h-40 w-full relative">
+              <svg id="area-chart-svg" class="w-full h-full overflow-visible" viewBox="0 0 360 120" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#0284c7" stop-opacity="0.32" />
+                    <stop offset="100%" stop-color="#0284c7" stop-opacity="0.0" />
+                  </linearGradient>
+                </defs>
+                <path id="area-chart-fill" d="" fill="url(#areaGradient)" />
+                <path id="area-chart-stroke" d="" fill="none" stroke="#0284c7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                <g id="area-chart-dots"></g>
+              </svg>
+            </div>
+            <div id="area-labels" class="flex justify-between text-[11px] font-semibold text-slate-400 pt-2 px-1 border-t border-slate-200"></div>
+          </div>
+
         </div>
 
         <div id="chart-selected-info" class="text-center text-xs font-bold text-slate-700 bg-slate-50 py-2.5 rounded-xl border border-slate-100">
@@ -288,60 +355,60 @@
         </div>
       </div>
 
-      <!-- Карточка: Статистика движения средств (ДИНАМИЧЕСКИ ПОДСТРАИВАЕТСЯ) -->
+      <!-- Карточка: Динамическая статистика движения средств -->
       <div class="soft-card p-5 md:p-6 space-y-3">
         <div class="flex justify-between items-center pb-1">
           <h2 class="text-base font-extrabold text-slate-900 tracking-tight">Статистика движения средств</h2>
-          <span id="st-period-badge" class="text-[10px] px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold">за год</span>
+          <span id="st-period-badge" class="text-[10px] px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold border border-slate-200/60">за год</span>
         </div>
 
         <div class="divide-y divide-slate-100 text-sm">
           <div class="py-3 flex justify-between items-center">
             <div>
               <span class="text-slate-600 font-semibold">Доходность</span>
-              <div class="text-[10px] text-slate-400">рыночный прирост активов</div>
+              <div class="text-[10px] text-slate-400 font-medium">рыночный прирост активов</div>
             </div>
-            <span id="st-income" class="font-extrabold text-slate-900">0,00 ₽</span>
+            <span id="st-income" class="shimmer-box font-extrabold text-slate-900">0,00 ₽</span>
           </div>
 
           <div class="py-3 flex justify-between items-center">
             <div>
               <span class="text-slate-600 font-semibold">Дивиденды</span>
-              <div class="text-[10px] text-slate-400">фактически получено на счет</div>
+              <div class="text-[10px] text-slate-400 font-medium">фактически получено на счет</div>
             </div>
-            <span id="st-divs" class="font-extrabold text-slate-900">0,00 ₽</span>
+            <span id="st-divs" class="shimmer-box font-extrabold text-slate-900">0,00 ₽</span>
           </div>
 
           <div class="py-3 flex justify-between items-center">
             <div>
               <span class="text-slate-600 font-semibold">Купоны</span>
-              <div id="st-coupons-sub" class="text-[10px] text-slate-400">получено (в год: +0 ₽)</div>
+              <div id="st-coupons-sub" class="text-[10px] text-slate-400 font-medium">получено (в год: +0 ₽)</div>
             </div>
-            <span id="st-coupons" class="font-extrabold text-slate-900">0,00 ₽</span>
+            <span id="st-coupons" class="shimmer-box font-extrabold text-slate-900">0,00 ₽</span>
           </div>
 
           <div class="py-3 flex justify-between items-center">
             <div>
               <span class="text-slate-600 font-semibold">Оборот</span>
-              <div class="text-[10px] text-slate-400">объем сделок с ценными бумагами</div>
+              <div class="text-[10px] text-slate-400 font-medium">объем сделок с ценными бумагами</div>
             </div>
-            <span id="st-turnover" class="font-extrabold text-slate-900">0,00 ₽</span>
+            <span id="st-turnover" class="shimmer-box font-extrabold text-slate-900">0,00 ₽</span>
           </div>
 
           <div class="py-3 flex justify-between items-center">
             <div>
               <span class="text-slate-600 font-semibold">Пополнения</span>
-              <div class="text-[10px] text-slate-400">всего внесено на брокерский счет</div>
+              <div class="text-[10px] text-slate-400 font-medium">всего внесено на брокерский счет</div>
             </div>
-            <span id="st-deposits" class="font-extrabold text-slate-900">0,00 ₽</span>
+            <span id="st-deposits" class="shimmer-box font-extrabold text-slate-900">0,00 ₽</span>
           </div>
 
           <div class="py-3 flex justify-between items-center">
             <div>
               <span class="text-slate-600 font-semibold">Выводы</span>
-              <div class="text-[10px] text-slate-400">выведено на карту</div>
+              <div class="text-[10px] text-slate-400 font-medium">выведено на карту</div>
             </div>
-            <span id="st-withdrawals" class="font-extrabold text-slate-900">0,00 ₽</span>
+            <span id="st-withdrawals" class="shimmer-box font-extrabold text-slate-900">0,00 ₽</span>
           </div>
         </div>
       </div>
@@ -360,10 +427,10 @@
 
       <div class="dark-balance-card p-6 md:p-7 text-white relative overflow-hidden">
         <span class="text-[11px] font-semibold text-slate-300 uppercase tracking-wider">Чистыми к выводу прямо сейчас</span>
-        <div id="tax-val-net" class="text-3xl md:text-4xl font-black mt-1 text-emerald-400 tracking-tight">0,00 ₽</div>
+        <div id="tax-val-net" class="shimmer-box text-3xl md:text-4xl font-black mt-1 text-emerald-400 tracking-tight">0,00 ₽</div>
         <div class="mt-3 flex items-center justify-between text-xs pt-2 border-t border-white/10 text-slate-300">
           <span>Накопленный налог:</span>
-          <span id="tax-val-total" class="font-extrabold text-rose-400">-0,00 ₽</span>
+          <span id="tax-val-total" class="shimmer-box font-extrabold text-rose-400">-0,00 ₽</span>
         </div>
       </div>
 
@@ -374,16 +441,16 @@
               <span>🏛️</span>
               <span>Купоны ОФЗ (Отложенный 13%)</span>
             </div>
-            <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 font-bold">Январь / Вывод</span>
+            <span class="text-[10px] px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 font-bold border border-amber-200/60">Январь / Вывод</span>
           </div>
           <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100 space-y-1 text-xs">
             <div class="flex justify-between">
               <span class="text-slate-500">Годовой купонный поток (100%):</span>
-              <span id="tax-bonds-gross" class="font-bold text-slate-900">0,00 ₽</span>
+              <span id="tax-bonds-gross" class="shimmer-box font-bold text-slate-900">0,00 ₽</span>
             </div>
             <div class="flex justify-between text-rose-600">
               <span>Налог 13% к списанию:</span>
-              <span id="tax-bonds-due" class="font-extrabold">-0,00 ₽</span>
+              <span id="tax-bonds-due" class="shimmer-box font-extrabold">-0,00 ₽</span>
             </div>
           </div>
         </div>
@@ -394,16 +461,16 @@
               <span>⚖️</span>
               <span>Курсовой рост и сальдирование</span>
             </div>
-            <span id="tax-stocks-badge" class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold">0 ₽ налога</span>
+            <span id="tax-stocks-badge" class="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold border border-emerald-200/60">0 ₽ налога</span>
           </div>
           <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100 space-y-1 text-xs">
             <div class="flex justify-between">
               <span class="text-slate-500">Курсовой результат акций:</span>
-              <span id="tax-stocks-pnl" class="font-bold text-slate-900">0,00 ₽</span>
+              <span id="tax-stocks-pnl" class="shimmer-box font-bold text-slate-900">0,00 ₽</span>
             </div>
             <div class="flex justify-between">
               <span class="text-slate-500">Налог при закрытии:</span>
-              <span id="tax-stocks-due" class="font-extrabold text-slate-900">0,00 ₽</span>
+              <span id="tax-stocks-due" class="shimmer-box font-extrabold text-slate-900">0,00 ₽</span>
             </div>
           </div>
         </div>
@@ -421,21 +488,39 @@
       </div>
     </div>
 
-    <!-- ================= ЭКРАН 4: АКЦИИ ================= -->
+    <!-- ================= ЭКРАН 4: АКЦИИ (С ФИЛЬТРАМИ И СЕКТОРАМИ) ================= -->
     <div id="tab-stocks" class="tab-view hidden space-y-3">
       <div class="flex justify-between items-center px-1">
         <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Акции в портфеле</h2>
-        <span id="stocks-count" class="text-xs font-semibold text-sky-700 bg-sky-50 px-2.5 py-0.5 rounded-xl">0 поз.</span>
+        <span id="stocks-count" class="text-xs font-semibold text-sky-700 bg-sky-50 border border-sky-200/60 px-2.5 py-0.5 rounded-xl">0 поз.</span>
       </div>
+
+      <!-- Панель сортировки акций -->
+      <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-[11px] font-bold">
+        <span class="text-slate-400 text-[10px] pr-1">Сортировка:</span>
+        <button onclick="setSortMode('stocks', 'cost')" id="sort-st-cost" class="px-2.5 py-1 rounded-xl bg-slate-900 text-white shadow-sm transition">По сумме ↓</button>
+        <button onclick="setSortMode('stocks', 'pnl')" id="sort-st-pnl" class="px-2.5 py-1 rounded-xl bg-white soft-card text-slate-600 transition">По доходу</button>
+        <button onclick="setSortMode('stocks', 'name')" id="sort-st-name" class="px-2.5 py-1 rounded-xl bg-white soft-card text-slate-600 transition">По тикеру</button>
+      </div>
+
       <div id="stocks-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
     </div>
 
-    <!-- ================= ЭКРАН 5: ОБЛИГАЦИИ ================= -->
+    <!-- ================= ЭКРАН 5: ОБЛИГАЦИИ (С ФИЛЬТРАМИ) ================= -->
     <div id="tab-bonds" class="tab-view hidden space-y-3">
       <div class="flex justify-between items-center px-1">
         <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Облигации в портфеле</h2>
-        <span id="bonds-count" class="text-xs font-semibold text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-xl">0 поз.</span>
+        <span id="bonds-count" class="text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-2.5 py-0.5 rounded-xl">0 поз.</span>
       </div>
+
+      <!-- Панель сортировки облигаций -->
+      <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-[11px] font-bold">
+        <span class="text-slate-400 text-[10px] pr-1">Сортировка:</span>
+        <button onclick="setSortMode('bonds', 'cost')" id="sort-bd-cost" class="px-2.5 py-1 rounded-xl bg-slate-900 text-white shadow-sm transition">По сумме ↓</button>
+        <button onclick="setSortMode('bonds', 'yield')" id="sort-bd-yield" class="px-2.5 py-1 rounded-xl bg-white soft-card text-slate-600 transition">По % доходности</button>
+        <button onclick="setSortMode('bonds', 'name')" id="sort-bd-name" class="px-2.5 py-1 rounded-xl bg-white soft-card text-slate-600 transition">По имени</button>
+      </div>
+
       <div id="bonds-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
     </div>
 
@@ -526,7 +611,7 @@
     </div>
   </div>
 
-  <!-- НИЖНЯЯ ПАНЕЛЬ НАВИГАЦИИ -->
+  <!-- НИЖНЯЯ ПАНЕЛЬ НАВИГАЦИИ (FLOATING DOCK) -->
   <nav class="fixed bottom-4 left-4 right-4 max-w-md md:max-w-xl mx-auto bg-slate-100/95 backdrop-blur-2xl rounded-3xl p-1.5 flex justify-between items-center z-50 shadow-xl shadow-slate-300/40 border border-slate-200/80">
     <button onclick="setTab('summary')" id="b-summary" class="nav-btn flex-1 py-2 rounded-2xl flex flex-col items-center gap-1 text-slate-500 font-bold text-[10px] tab-active">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -561,14 +646,15 @@
   </nav>
 
   <script>
+    // ССЫЛКА НА ВАШ GOOGLE APPS SCRIPT:
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwcvhsjeidMICS9pYLVjINAXGNCqQGi3Qu7IVL_SpxNjgMCR6p2xdCvDguSTaJEwb5x/exec"; 
 
     const tg = window.Telegram?.WebApp;
     if (tg) {
       tg.ready();
       tg.expand();
-      tg.setHeaderColor('#f4f6fb');
-      tg.setBackgroundColor('#f4f6fb');
+      tg.setHeaderColor('#f5f7fb');
+      tg.setBackgroundColor('#f5f7fb');
       if (tg.initDataUnsafe?.user?.first_name) {
         document.getElementById('user-greeting').innerText = `Привет, ${tg.initDataUnsafe.user.first_name}`;
       }
@@ -580,8 +666,13 @@
     let globalBonds = [];
     let globalCashLog = [];
     let globalDivsLog = [];
+
     let currentChartPeriod = 'year';
     let currentChartUnit = 'rub';
+    let currentChartType = 'area'; // 'area' или 'bars'
+
+    let stockSort = 'cost'; // 'cost', 'pnl', 'name'
+    let bondSort = 'cost';  // 'cost', 'yield', 'name'
 
     const BRAND_DOMAINS = {
       'SBER': 'sber.ru', 'SBERP': 'sber.ru', 'MTSS': 'mts.ru', 'SNGS': 'surgutneftegas.ru',
@@ -590,6 +681,13 @@
       'T': 'tbank.ru', 'TCSG': 'tbank.ru', 'VTBR': 'vtb.ru', 'OZON': 'ozon.ru',
       'CHMF': 'severstal.com', 'NLMK': 'nlmk.com', 'ALRS': 'alrosa.ru', 'MGNT': 'magnit.ru',
       'POSI': 'ptsecurity.com', 'VKCO': 'vk.company', 'FLOT': 'scf-group.ru', 'MOEX': 'moex.com'
+    };
+
+    const STOCK_SECTORS = {
+      'SBER': 'Банки & Финтех', 'SBERP': 'Банки & Финтех', 'VTBR': 'Банки & Финтех', 'T': 'Банки & Финтех',
+      'MTSS': 'Телеком', 'VKCO': 'IT & Интернет', 'YNDX': 'IT & Интернет', 'YDEX': 'IT & Интернет',
+      'LKOH': 'Нефть и газ', 'GAZP': 'Нефть и газ', 'ROSN': 'Нефть и газ', 'NVTK': 'Нефть и газ', 'SNGS': 'Нефть и газ', 'SNGSP': 'Нефть и газ',
+      'GMKN': 'Металлургия', 'CHMF': 'Металлургия', 'NLMK': 'Металлургия', 'ALRS': 'Добыча', 'MGNT': 'Ритейл', 'OZON': 'E-Commerce'
     };
 
     function parseAssetDate(dStr) {
@@ -719,11 +817,40 @@
         </svg>`;
     }
 
-    // ================= ПЕРЕКЛЮЧЕНИЕ ПЕРИОДОВ АНАЛИТИКИ И РАСЧЁТ =================
+    // ================= СОРТИРОВКА АКЦИЙ И ОБЛИГАЦИЙ =================
+    function setSortMode(assetType, mode) {
+      triggerHaptic("light");
+      if (assetType === 'stocks') {
+        stockSort = mode;
+        ['cost', 'pnl', 'name'].forEach(m => {
+          const btn = document.getElementById('sort-st-' + m);
+          if (btn) btn.className = (m === mode) ? "px-2.5 py-1 rounded-xl bg-slate-900 text-white shadow-sm transition" : "px-2.5 py-1 rounded-xl bg-white soft-card text-slate-600 transition";
+        });
+        renderStocksList();
+      } else {
+        bondSort = mode;
+        ['cost', 'yield', 'name'].forEach(m => {
+          const btn = document.getElementById('sort-bd-' + m);
+          if (btn) btn.className = (m === mode) ? "px-2.5 py-1 rounded-xl bg-slate-900 text-white shadow-sm transition" : "px-2.5 py-1 rounded-xl bg-white soft-card text-slate-600 transition";
+        });
+        renderBondsList();
+      }
+    }
+
+    // ================= ГРАФИК: ТУМБЛЕРЫ (РУБ/%, ЛИНИЯ/СТОЛБИКИ) =================
     function toggleChartUnit() {
       triggerHaptic("light");
       currentChartUnit = (currentChartUnit === 'rub') ? 'pct' : 'rub';
       document.getElementById('chart-unit-text').innerText = (currentChartUnit === 'rub') ? "В рублях" : "В процентах";
+      renderAnalyticsChart(currentChartPeriod);
+    }
+
+    function toggleChartType() {
+      triggerHaptic("light");
+      currentChartType = (currentChartType === 'area') ? 'bars' : 'area';
+      document.getElementById('chart-type-text').innerText = (currentChartType === 'area') ? "📈 Линия" : "📊 Столбики";
+      document.getElementById('chart-bars-mode').classList.toggle('hidden', currentChartType !== 'bars');
+      document.getElementById('chart-area-mode').classList.toggle('hidden', currentChartType !== 'area');
       renderAnalyticsChart(currentChartPeriod);
     }
 
@@ -740,7 +867,6 @@
         }
       });
 
-      // Пересчитываем статистику и график строго под выбранный период
       updateAnalyticsStats(p);
       renderAnalyticsChart(p);
     }
@@ -760,10 +886,8 @@
       }
 
       document.getElementById('st-period-badge').innerText = periodName;
-
       const startDate = new Date(now.getTime() - (daysWindow * 24 * 60 * 60 * 1000));
 
-      // Фильтрация сделок по акциям и облигациям в пределах периода
       let periodTurnover = 0;
       let periodAssetsCurCost = 0;
 
@@ -783,7 +907,6 @@
         }
       });
 
-      // Доходность за период
       let periodPnl = (periodAssetsCurCost - periodTurnover);
       let periodYield = periodTurnover > 0 ? (periodPnl / periodTurnover) * 100 : 0;
 
@@ -792,7 +915,6 @@
       incomeEl.innerText = `${sign}${formatRub(periodPnl)} (${sign}${periodYield.toFixed(2)}%)`;
       incomeEl.className = periodPnl >= 0 ? "font-extrabold text-emerald-600" : "font-extrabold text-rose-600";
 
-      // Дивиденды за период
       let periodDivs = 0;
       globalDivsLog.forEach(d => {
         const dDate = parseAssetDate(d.date);
@@ -800,7 +922,6 @@
       });
       document.getElementById('st-divs').innerText = formatRub(periodDivs);
 
-      // Купоны
       let expectedCouponText = `(в год: +${formatRub(s.couponsYear)})`;
       if (period === 'month') expectedCouponText = `(ожидается в сентябре: +598,40 ₽)`;
       else if (period === 'half') expectedCouponText = `(ожидается за полгода: +598,40 ₽)`;
@@ -808,10 +929,8 @@
       document.getElementById('st-coupons').innerText = formatRub(s.couponsReceived || 0);
       document.getElementById('st-coupons-sub').innerText = `получено ${expectedCouponText}`;
 
-      // Оборот за период
       document.getElementById('st-turnover').innerText = formatRub(periodTurnover > 0 ? periodTurnover : s.turnover);
 
-      // Пополнения за период
       let periodDeposits = 0;
       let periodWithdrawals = 0;
 
@@ -830,12 +949,6 @@
     }
 
     function renderAnalyticsChart(period = 'year') {
-      const container = document.getElementById('bars-container');
-      const labelsEl = document.getElementById('bars-labels');
-      if (!container || !labelsEl) return;
-      container.innerHTML = '';
-      labelsEl.innerHTML = '';
-
       const s = globalSummary || {};
       const curWorth = Number(s.totalWorth) || 19602.79;
       const invAssets = Number(s.invested) || 19953.50;
@@ -849,49 +962,316 @@
       let points = [];
 
       if (period === 'month') {
-        // Отображение дней текущего месяца: 17 сен, 18 сен, 19 сен (сегодня)
         points = [
           { label: `${firstDate.getDate()} сен`, valRub: invAssets, valPct: 0.0, info: "Старт (покупка)" },
           { label: "18 сен", valRub: 19610.24, valPct: -2.16, info: "Торги" },
           { label: "19 сен", valRub: curWorth, valPct: curYield, info: "Сегодня", isToday: true }
         ];
       } else {
-        // ПОЛГОДА И ГОД: СТРОГО НАСТУПИВШИЕ/ЗАВЕРШЕННЫЕ МЕСЯЦЫ (БЕЗ БУДУЩИХ МЕСЯЦЕВ!)
-        // Поскольку портфель открыт в сентябре 2026, наступивший месяц ровно один: Сентябрь!
         points = [
           { label: "Сен", valRub: curWorth, valPct: curYield, info: "Сен 2026 (текущий месяц)", isToday: true }
         ];
       }
 
-      const maxVal = Math.max(...points.map(p => p.valRub), 1);
+      // 1. Отрисовка столбиков (Bars)
+      const bContainer = document.getElementById('bars-container');
+      const bLabelsEl = document.getElementById('bars-labels');
+      if (bContainer && bLabelsEl) {
+        bContainer.innerHTML = '';
+        bLabelsEl.innerHTML = '';
+        const maxVal = Math.max(...points.map(p => p.valRub), 1);
 
-      points.forEach((p, idx) => {
-        const heightPct = Math.max(25, Math.min(96, Math.round((p.valRub / maxVal) * 90)));
-        const isSelected = p.isToday || (idx === points.length - 1);
-        const barColor = isSelected ? 'bg-sky-500' : 'bg-sky-400/70 hover:bg-sky-500';
+        points.forEach((p, idx) => {
+          const heightPct = Math.max(25, Math.min(96, Math.round((p.valRub / maxVal) * 90)));
+          const isSelected = p.isToday || (idx === points.length - 1);
+          const barColor = isSelected ? 'bg-sky-500' : 'bg-sky-400/70 hover:bg-sky-500';
 
-        const barCol = document.createElement('div');
-        barCol.className = "flex flex-col items-center h-full justify-end group cursor-pointer";
-        barCol.style.width = points.length === 1 ? "68px" : "48px";
-        barCol.onclick = () => {
-          triggerHaptic("light");
-          const valStr = (currentChartUnit === 'rub') ? formatRub(p.valRub) : (p.valPct >= 0 ? '+' : '') + p.valPct.toFixed(2) + '%';
-          document.getElementById('chart-selected-info').innerText = `${p.info}: ${valStr}`;
-        };
+          const barCol = document.createElement('div');
+          barCol.className = "flex flex-col items-center h-full justify-end group cursor-pointer";
+          barCol.style.width = points.length === 1 ? "68px" : "48px";
+          barCol.onclick = () => {
+            triggerHaptic("light");
+            const valStr = (currentChartUnit === 'rub') ? formatRub(p.valRub) : (p.valPct >= 0 ? '+' : '') + p.valPct.toFixed(2) + '%';
+            document.getElementById('chart-selected-info').innerText = `${p.info}: ${valStr}`;
+          };
 
-        barCol.innerHTML = `<div class="w-full ${barColor} rounded-t-2xl chart-bar shadow-sm" style="height: ${heightPct}%;"></div>`;
-        container.appendChild(barCol);
+          barCol.innerHTML = `<div class="w-full ${barColor} rounded-t-2xl chart-bar shadow-sm" style="height: ${heightPct}%;"></div>`;
+          bContainer.appendChild(barCol);
 
-        const lblSpan = document.createElement('span');
-        lblSpan.className = "text-center font-bold text-xs" + (isSelected ? " text-slate-900" : " text-slate-400");
-        lblSpan.style.width = points.length === 1 ? "68px" : "48px";
-        lblSpan.innerText = p.label;
-        labelsEl.appendChild(lblSpan);
-      });
+          const lblSpan = document.createElement('span');
+          lblSpan.className = "text-center font-bold text-xs" + (isSelected ? " text-slate-900" : " text-slate-400");
+          lblSpan.style.width = points.length === 1 ? "68px" : "48px";
+          lblSpan.innerText = p.label;
+          bLabelsEl.appendChild(lblSpan);
+        });
+      }
+
+      // 2. Отрисовка векторного линейного Area Chart
+      const areaFill = document.getElementById('area-chart-fill');
+      const areaStroke = document.getElementById('area-chart-stroke');
+      const areaDots = document.getElementById('area-chart-dots');
+      const areaLabels = document.getElementById('area-labels');
+
+      if (areaFill && areaStroke && areaDots && areaLabels) {
+        areaDots.innerHTML = '';
+        areaLabels.innerHTML = '';
+
+        const W = 360;
+        const H = 100;
+        const paddingX = 30;
+        const count = points.length;
+
+        const maxVal = Math.max(...points.map(p => p.valRub));
+        const minVal = Math.min(...points.map(p => p.valRub)) * 0.995;
+        const range = (maxVal - minVal) || 1;
+
+        const coords = points.map((p, i) => {
+          const x = count === 1 ? (W / 2) : (paddingX + (i / (count - 1)) * (W - 2 * paddingX));
+          const y = H - ((p.valRub - minVal) / range) * (H - 25) - 15;
+          return { x, y, p };
+        });
+
+        let strokeD = "";
+        let fillD = "";
+
+        if (coords.length === 1) {
+          const c = coords[0];
+          strokeD = `M ${c.x - 40} ${c.y} L ${c.x + 40} ${c.y}`;
+          fillD = `M ${c.x - 40} 120 L ${c.x - 40} ${c.y} L ${c.x + 40} ${c.y} L ${c.x + 40} 120 Z`;
+        } else {
+          strokeD = `M ${coords[0].x} ${coords[0].y}`;
+          for (let i = 1; i < coords.length; i++) {
+            const prev = coords[i - 1];
+            const curr = coords[i];
+            const midX = (prev.x + curr.x) / 2;
+            strokeD += ` C ${midX} ${prev.y}, ${midX} ${curr.y}, ${curr.x} ${curr.y}`;
+          }
+          fillD = strokeD + ` L ${coords[coords.length - 1].x} 120 L ${coords[0].x} 120 Z`;
+        }
+
+        areaStroke.setAttribute('d', strokeD);
+        areaFill.setAttribute('d', fillD);
+
+        coords.forEach((c) => {
+          const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          circle.setAttribute('cx', c.x);
+          circle.setAttribute('cy', c.y);
+          circle.setAttribute('r', '5');
+          circle.setAttribute('fill', '#ffffff');
+          circle.setAttribute('stroke', '#0284c7');
+          circle.setAttribute('stroke-width', '3');
+          circle.setAttribute('class', 'cursor-pointer hover:r-7 transition-all');
+          circle.onclick = () => {
+            triggerHaptic("light");
+            const valStr = (currentChartUnit === 'rub') ? formatRub(c.p.valRub) : (c.p.valPct >= 0 ? '+' : '') + c.p.valPct.toFixed(2) + '%';
+            document.getElementById('chart-selected-info').innerText = `${c.p.info}: ${valStr}`;
+          };
+          areaDots.appendChild(circle);
+        });
+
+        points.forEach(p => {
+          const span = document.createElement('span');
+          span.className = "text-center font-bold text-xs" + (p.isToday ? " text-slate-900 font-extrabold" : " text-slate-400");
+          span.innerText = p.label;
+          areaLabels.appendChild(span);
+        });
+      }
 
       const selectedPoint = points[points.length - 1];
       const valStr = (currentChartUnit === 'rub') ? formatRub(selectedPoint.valRub) : (selectedPoint.valPct >= 0 ? '+' : '') + selectedPoint.valPct.toFixed(2) + '%';
       document.getElementById('chart-selected-info').innerText = `${selectedPoint.info}: ${valStr}`;
+    }
+
+    // ================= СПИСКИ АКЦИЙ И ОБЛИГАЦИЙ (С СОРТИРОВКОЙ) =================
+    function renderStocksList() {
+      const sl = document.getElementById('stocks-list');
+      if (!sl) return;
+
+      const list = [...globalStocks];
+      if (stockSort === 'cost') list.sort((a, b) => b.curCost - a.curCost);
+      else if (stockSort === 'pnl') list.sort((a, b) => b.pnl - a.pnl);
+      else if (stockSort === 'name') list.sort((a, b) => a.ticker.localeCompare(b.ticker));
+
+      document.getElementById('stocks-count').innerText = `${list.length} поз.`;
+      sl.innerHTML = list.length ? '' : '<div class="text-xs text-slate-400 text-center py-12 soft-card col-span-2">Акции пока не внесены</div>';
+
+      const now = new Date();
+
+      list.forEach((st, idx) => {
+        const accId = `acc-stock-${idx}`;
+        const isPos = st.pnl >= 0;
+        const pnlClass = isPos ? 'text-emerald-600' : 'text-rose-600';
+        const pnlSign = isPos ? '+' : '';
+        const sector = STOCK_SECTORS[st.ticker] || 'Российский рынок';
+
+        const bDate = parseAssetDate(st.buyDate);
+        let daysHeld = 1;
+        if (bDate) daysHeld = Math.max(1, Math.floor((now - bDate) / (1000 * 60 * 60 * 24)));
+        const daysLeft = Math.max(0, 1095 - daysHeld);
+        const isLdv = daysHeld >= 1095;
+
+        sl.innerHTML += `
+          <div id="${accId}" class="soft-card overflow-hidden transition cursor-pointer">
+            <div onclick="toggleAccordion('${accId}')" class="p-4 flex justify-between items-center select-none">
+              <div class="flex items-center gap-3">
+                ${getAssetLogoHtml(st.ticker, false)}
+                <div>
+                  <div class="font-extrabold text-sm text-slate-900 flex items-center gap-1.5">
+                    <span>${st.ticker}</span>
+                    <span class="text-[10px] px-2 py-0.5 rounded-md bg-slate-100 text-slate-500 font-semibold">${st.quantity} шт.</span>
+                  </div>
+                  <div class="flex items-center gap-1.5 mt-0.5">
+                    <span class="text-[9px] px-2 py-0.2 rounded-md bg-sky-50 text-sky-700 font-bold border border-sky-200/50">${sector}</span>
+                    <span class="text-[11px] text-slate-400 font-medium">· Вход: ${formatRub(st.avgBuyPrice)}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <div class="text-right">
+                  <div class="font-extrabold text-sm text-slate-900">${formatRub(st.curCost)}</div>
+                  <div class="text-xs font-bold ${pnlClass}">
+                    ${pnlSign}${formatRub(st.pnl)} (${pnlSign}${st.pnlPct.toFixed(1)}%)
+                  </div>
+                </div>
+                <svg class="w-4 h-4 text-slate-400 accordion-chevron transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+
+            <div class="accordion-body px-4 pb-4 border-t border-slate-100/80 pt-3">
+              <div class="space-y-3">
+                <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100 flex items-center justify-between gap-3">
+                  <div class="text-xs">
+                    <div class="text-[10px] font-bold text-slate-400 uppercase">Динамика</div>
+                    <div class="font-extrabold text-sm ${pnlClass}">${pnlSign}${st.pnlPct.toFixed(2)}%</div>
+                  </div>
+                  <div class="flex-1 max-w-[140px]">
+                    ${renderSparklineSvg(isPos)}
+                  </div>
+                  <div class="text-right text-xs">
+                    <div class="text-[10px] font-bold text-slate-400 uppercase">Рынок (MOEX)</div>
+                    <div class="font-extrabold text-sm text-slate-900">${formatRub(st.curPrice)}</div>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                  <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                    <div class="text-[10px] text-slate-400 font-semibold">Всего вложено</div>
+                    <div class="font-bold text-slate-800 mt-0.5">${formatRub(st.invested)}</div>
+                  </div>
+                  <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                    <div class="text-[10px] text-slate-400 font-semibold">Текущая стоимость</div>
+                    <div class="font-bold text-slate-800 mt-0.5">${formatRub(st.curCost)}</div>
+                  </div>
+                </div>
+
+                <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100 space-y-1.5 text-xs">
+                  <div class="flex justify-between items-center">
+                    <span class="text-slate-500 font-medium">Льгота 3 года (ЛДВ):</span>
+                    ${isLdv 
+                      ? `<span class="text-[10px] px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 font-bold border border-emerald-200">Налог 0%</span>`
+                      : `<span class="text-[10px] text-slate-600 font-bold">осталось ${daysLeft} дн.</span>`
+                    }
+                  </div>
+                  <div class="text-[10px] text-slate-400 font-medium">
+                    Удерживается в портфеле: <b class="text-slate-700 font-semibold">${daysHeld} дн.</b>
+                  </div>
+                </div>
+
+                <button onclick="quickBuy('stock', '${st.ticker}')" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold shadow-sm transition active:scale-98 flex items-center justify-center gap-1.5">
+                  <span>+ Докупить ${st.ticker}</span>
+                </button>
+              </div>
+            </div>
+          </div>`;
+      });
+    }
+
+    function renderBondsList() {
+      const bl = document.getElementById('bonds-list');
+      if (!bl) return;
+
+      const list = [...globalBonds];
+      if (bondSort === 'cost') list.sort((a, b) => b.curCost - a.curCost);
+      else if (bondSort === 'yield') list.sort((a, b) => b.yieldRate - a.yieldRate);
+      else if (bondSort === 'name') list.sort((a, b) => a.name.localeCompare(b.name));
+
+      document.getElementById('bonds-count').innerText = `${list.length} поз.`;
+      bl.innerHTML = list.length ? '' : '<div class="text-xs text-slate-400 text-center py-12 soft-card col-span-2">Облигации пока не внесены</div>';
+
+      list.forEach((bd, idx) => {
+        const accId = `acc-bond-${idx}`;
+        const isPos = bd.pnl >= 0;
+        const pnlClass = isPos ? 'text-emerald-600' : 'text-rose-600';
+        const pnlSign = isPos ? '+' : '';
+        const couponInfo = formatCouponDate(bd.nextCoupon);
+
+        bl.innerHTML += `
+          <div id="${accId}" class="soft-card overflow-hidden transition cursor-pointer">
+            <div onclick="toggleAccordion('${accId}')" class="p-4 flex justify-between items-center select-none">
+              <div class="flex items-center gap-3">
+                ${getAssetLogoHtml(bd.name, true)}
+                <div>
+                  <div class="font-extrabold text-sm text-slate-900 flex items-center gap-1.5">
+                    <span>${bd.name}</span>
+                    <span class="text-[10px] px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 font-semibold border border-amber-200/60">${bd.quantity} шт.</span>
+                  </div>
+                  <div class="text-[11px] text-slate-400 font-medium mt-0.5">Вход: ${formatRub(bd.avgBuyPrice)}</div>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <div class="text-right">
+                  <div class="font-extrabold text-sm text-slate-900">${formatRub(bd.curCost)}</div>
+                  <div class="text-xs font-bold text-amber-600">
+                    ${bd.yieldRate.toFixed(1)}% годовых
+                  </div>
+                </div>
+                <svg class="w-4 h-4 text-slate-400 accordion-chevron transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+
+            <div class="accordion-body px-4 pb-4 border-t border-slate-100/80 pt-3">
+              <div class="space-y-3">
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                  <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                    <div class="text-[10px] text-slate-400 font-semibold">Размер купона</div>
+                    <div class="font-bold text-emerald-600 mt-0.5">+${formatRub(bd.coupon)}</div>
+                    <div class="text-[9px] text-slate-400 font-medium">${couponInfo ? couponInfo.text : '2 выплаты в год'}</div>
+                  </div>
+                  <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                    <div class="text-[10px] text-slate-400 font-semibold">Дата погашения</div>
+                    <div class="font-bold text-slate-800 mt-0.5">${bd.matDate || 'не указана'}</div>
+                    <div class="text-[9px] text-slate-400 font-medium">возврат номинала</div>
+                  </div>
+                </div>
+
+                <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100 space-y-1.5 text-xs">
+                  <div class="flex justify-between">
+                    <span class="text-slate-500 font-medium">Годовой доход с позиции:</span>
+                    <span class="font-extrabold text-emerald-600">+${formatRub(bd.yearCouponTotal)}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-slate-500 font-medium">Текущая цена (с НКД):</span>
+                    <span class="font-bold text-slate-800">${formatRub(bd.curPrice)}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-slate-500 font-medium">Курсовой результат:</span>
+                    <span class="font-bold ${pnlClass}">${pnlSign}${formatRub(bd.pnl)} (${pnlSign}${bd.pnlPct.toFixed(1)}%)</span>
+                  </div>
+                </div>
+
+                <button onclick="quickBuy('bond', '${bd.name}')" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold shadow-sm transition active:scale-98 flex items-center justify-center gap-1.5">
+                  <span>+ Докупить ${bd.name}</span>
+                </button>
+              </div>
+            </div>
+          </div>`;
+      });
     }
 
     function groupStocks(rawStocks) {
@@ -1011,6 +1391,9 @@
       const icon = document.getElementById('refresh-icon');
       if (icon) icon.classList.add('animate-spin');
 
+      // Активируем скелетон Shimmer
+      document.getElementById('app-body').classList.add('is-loading');
+
       try {
         const res = await fetch(`${SCRIPT_URL}?t=${Date.now()}`);
         const data = await res.json();
@@ -1024,7 +1407,7 @@
         globalStocks = groupedStocks;
         globalBonds = groupedBonds;
 
-        // 1. Главный баланс (Сводка)
+        // 1. Главный баланс
         document.getElementById('val-worth').innerText = formatRub(s.totalWorth);
         document.getElementById('val-invested').innerText = formatRub(s.invested);
         document.getElementById('val-summary-cash').innerText = formatRub(s.freeCash);
@@ -1038,9 +1421,9 @@
 
         const badgeProfit = document.getElementById('badge-profit');
         if (s.income >= 0) {
-          badgeProfit.className = "flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-500/20 text-emerald-300 text-xs font-bold";
+          badgeProfit.className = "shimmer-box flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-500/20 text-emerald-300 text-xs font-bold";
         } else {
-          badgeProfit.className = "flex items-center gap-1.5 px-3 py-1 rounded-xl bg-rose-500/20 text-rose-300 text-xs font-bold";
+          badgeProfit.className = "shimmer-box flex items-center gap-1.5 px-3 py-1 rounded-xl bg-rose-500/20 text-rose-300 text-xs font-bold";
         }
 
         // Donut Chart
@@ -1070,20 +1453,33 @@
         donutCash.setAttribute('stroke-dasharray', `${cDash} ${C - cDash}`);
         donutCash.setAttribute('stroke-dashoffset', `-${sDash + bDash}`);
 
-        // Пассивный доход
+        // Пассивный доход и Виджет ближайшей выплаты
         let totalYearCoupon = 0;
         const timelineEl = document.getElementById('payouts-timeline');
         timelineEl.innerHTML = '';
+
+        let nearestCouponBond = null;
+        let minDaysToCoupon = 9999;
 
         groupedBonds.forEach(bd => {
           totalYearCoupon += (bd.yearCouponTotal || 0);
           const singlePayout = (bd.coupon * bd.quantity);
           const couponInfo = formatCouponDate(bd.nextCoupon);
 
+          if (couponInfo && couponInfo.days >= 0 && couponInfo.days < minDaysToCoupon) {
+            minDaysToCoupon = couponInfo.days;
+            nearestCouponBond = {
+              name: bd.name,
+              amount: singlePayout,
+              days: couponInfo.days,
+              text: couponInfo.text
+            };
+          }
+
           let dateHtml = `<span class="text-slate-500 font-medium">2 выплаты в год</span>`;
           if (couponInfo) {
             if (couponInfo.isSoon) {
-              dateHtml = `<span class="px-2 py-0.5 rounded-lg bg-amber-100 text-amber-800 font-extrabold text-[10px]">🔔 ${couponInfo.text}</span>`;
+              dateHtml = `<span class="px-2 py-0.5 rounded-lg bg-amber-100 text-amber-800 font-extrabold text-[10px] border border-amber-200/60">🔔 ${couponInfo.text}</span>`;
             } else {
               dateHtml = `<span class="text-slate-600 font-semibold text-[10px]">Ближайшая: ${couponInfo.text}</span>`;
             }
@@ -1097,10 +1493,19 @@
               </div>
               <div class="text-right">
                 <div class="font-black text-emerald-600">+${formatRub(singlePayout)}</div>
-                <div class="text-[10px] text-slate-400">за выплату</div>
+                <div class="text-[10px] text-slate-400 font-medium">за выплату</div>
               </div>
             </div>`;
         });
+
+        // Заполнение виджета Countdown
+        if (nearestCouponBond) {
+          document.getElementById('nearest-coupon-bond').innerText = nearestCouponBond.name;
+          document.getElementById('nearest-coupon-amount').innerText = `+${formatRub(nearestCouponBond.amount)}`;
+          document.getElementById('nearest-coupon-days').innerText = `осталось ${nearestCouponBond.days} дн. (${nearestCouponBond.text})`;
+          const progressPct = Math.max(10, Math.min(98, Math.round(((182 - nearestCouponBond.days) / 182) * 100)));
+          document.getElementById('nearest-coupon-bar').style.width = `${progressPct}%`;
+        }
 
         if (groupedBonds.length === 0) {
           timelineEl.innerHTML = `<div class="text-[11px] text-slate-400 text-center py-2">Облигаций пока нет</div>`;
@@ -1109,11 +1514,15 @@
         document.getElementById('val-passive-year').innerText = '+' + formatRub(totalYearCoupon);
         document.getElementById('val-passive-month').innerText = '+' + formatRub(totalYearCoupon / 12) + ' / мес';
 
-        // 2. Инициализация аналитики под выбранный период
+        // 2. Инициализация аналитики
         updateAnalyticsStats(currentChartPeriod);
         renderAnalyticsChart(currentChartPeriod);
 
-        // 3. Налоги
+        // 3. Рендер списков с текущей сортировкой
+        renderStocksList();
+        renderBondsList();
+
+        // 4. Налоги
         const bondTaxDue = totalYearCoupon * 0.13;
         document.getElementById('tax-bonds-gross').innerText = formatRub(totalYearCoupon);
         document.getElementById('tax-bonds-due').innerText = '-' + formatRub(bondTaxDue);
@@ -1144,14 +1553,14 @@
                   <span class="text-[10px] text-slate-400 font-normal">(${st.quantity} шт.)</span>
                 </div>
                 ${isLdv 
-                  ? `<span class="text-[10px] px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 font-bold">🛡️ ЛДВ 0%</span>`
-                  : `<span class="text-[10px] text-slate-500">осталось <b class="text-amber-600 font-bold">${daysLeft} дн.</b></span>`
+                  ? `<span class="text-[10px] px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 font-bold border border-emerald-200">🛡️ ЛДВ 0%</span>`
+                  : `<span class="text-[10px] text-slate-500 font-medium">осталось <b class="text-amber-600 font-bold">${daysLeft} дн.</b></span>`
                 }
               </div>
               <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
                 <div class="bg-gradient-to-r from-blue-600 to-emerald-500 h-1.5 rounded-full" style="width: ${progressPct}%"></div>
               </div>
-              <div class="flex justify-between text-[10px] text-slate-400">
+              <div class="flex justify-between text-[10px] text-slate-400 font-medium">
                 <span>В портфеле: ${daysHeld} дн.</span>
                 <span>Цель: 1 095 дн. (3 года)</span>
               </div>
@@ -1165,10 +1574,10 @@
         const stocksBadge = document.getElementById('tax-stocks-badge');
         if (stockTaxDue === 0) {
           stocksBadge.innerText = totalStockPnl < 0 ? "Убыток защищает" : "0 ₽ налога";
-          stocksBadge.className = "text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold border border-emerald-100";
+          stocksBadge.className = "text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold border border-emerald-200/60";
         } else {
           stocksBadge.innerText = `13% с прибыли`;
-          stocksBadge.className = "text-[10px] px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 font-bold border border-rose-100";
+          stocksBadge.className = "text-[10px] px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 font-bold border border-rose-200/60";
         }
 
         const totalTaxDue = bondTaxDue + stockTaxDue;
@@ -1178,181 +1587,16 @@
         document.getElementById('tax-val-total').innerText = '-' + formatRub(totalTaxDue);
         document.getElementById('card-net-withdraw').innerText = formatRub(netToWithdraw);
 
-        // 4. Акции (список)
-        document.getElementById('stocks-count').innerText = `${groupedStocks.length} поз.`;
-        const sl = document.getElementById('stocks-list');
-        sl.innerHTML = groupedStocks.length ? '' : '<div class="text-xs text-slate-400 text-center py-12 soft-card col-span-2">Акции пока не внесены</div>';
-        
-        groupedStocks.forEach((st, idx) => {
-          const accId = `acc-stock-${idx}`;
-          const isPos = st.pnl >= 0;
-          const pnlClass = isPos ? 'text-emerald-600' : 'text-rose-600';
-          const pnlSign = isPos ? '+' : '';
-
-          const bDate = parseAssetDate(st.buyDate);
-          let daysHeld = 1;
-          if (bDate) daysHeld = Math.max(1, Math.floor((now - bDate) / (1000 * 60 * 60 * 24)));
-          const daysLeft = Math.max(0, 1095 - daysHeld);
-          const isLdv = daysHeld >= 1095;
-
-          sl.innerHTML += `
-            <div id="${accId}" class="soft-card overflow-hidden transition cursor-pointer">
-              <div onclick="toggleAccordion('${accId}')" class="p-4 flex justify-between items-center select-none">
-                <div class="flex items-center gap-3">
-                  ${getAssetLogoHtml(st.ticker, false)}
-                  <div>
-                    <div class="font-extrabold text-sm text-slate-900 flex items-center gap-1.5">
-                      <span>${st.ticker}</span>
-                      <span class="text-[10px] px-2 py-0.5 rounded-md bg-slate-100 text-slate-500 font-semibold">${st.quantity} шт.</span>
-                    </div>
-                    <div class="text-[11px] text-slate-400 font-medium mt-0.5">Вход: ${formatRub(st.avgBuyPrice)}</div>
-                  </div>
-                </div>
-
-                <div class="flex items-center gap-3">
-                  <div class="text-right">
-                    <div class="font-extrabold text-sm text-slate-900">${formatRub(st.curCost)}</div>
-                    <div class="text-xs font-bold ${pnlClass}">
-                      ${pnlSign}${formatRub(st.pnl)} (${pnlSign}${st.pnlPct.toFixed(1)}%)
-                    </div>
-                  </div>
-                  <svg class="w-4 h-4 text-slate-400 accordion-chevron transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </div>
-              </div>
-
-              <div class="accordion-body px-4 pb-4 border-t border-slate-100/80 pt-3">
-                <div class="space-y-3">
-                  <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100 flex items-center justify-between gap-3">
-                    <div class="text-xs">
-                      <div class="text-[10px] font-bold text-slate-400 uppercase">Динамика</div>
-                      <div class="font-extrabold text-sm ${pnlClass}">${pnlSign}${st.pnlPct.toFixed(2)}%</div>
-                    </div>
-                    <div class="flex-1 max-w-[140px]">
-                      ${renderSparklineSvg(isPos)}
-                    </div>
-                    <div class="text-right text-xs">
-                      <div class="text-[10px] font-bold text-slate-400 uppercase">Рынок (MOEX)</div>
-                      <div class="font-extrabold text-sm text-slate-900">${formatRub(st.curPrice)}</div>
-                    </div>
-                  </div>
-
-                  <div class="grid grid-cols-2 gap-2 text-xs">
-                    <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                      <div class="text-[10px] text-slate-400 font-semibold">Всего вложено</div>
-                      <div class="font-bold text-slate-800 mt-0.5">${formatRub(st.invested)}</div>
-                    </div>
-                    <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                      <div class="text-[10px] text-slate-400 font-semibold">Текущая стоимость</div>
-                      <div class="font-bold text-slate-800 mt-0.5">${formatRub(st.curCost)}</div>
-                    </div>
-                  </div>
-
-                  <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100 space-y-1.5 text-xs">
-                    <div class="flex justify-between items-center">
-                      <span class="text-slate-500 font-medium">Льгота 3 года (ЛДВ):</span>
-                      ${isLdv 
-                        ? `<span class="text-[10px] px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 font-bold">Налог 0%</span>`
-                        : `<span class="text-[10px] text-slate-600 font-bold">осталось ${daysLeft} дн.</span>`
-                      }
-                    </div>
-                    <div class="text-[10px] text-slate-400">
-                      Удерживается в портфеле: <b class="text-slate-700 font-semibold">${daysHeld} дн.</b>
-                    </div>
-                  </div>
-
-                  <button onclick="quickBuy('stock', '${st.ticker}')" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold shadow-sm transition active:scale-98 flex items-center justify-center gap-1.5">
-                    <span>+ Докупить ${st.ticker}</span>
-                  </button>
-                </div>
-              </div>
-            </div>`;
-        });
-
-        // 5. Облигации (список)
-        document.getElementById('bonds-count').innerText = `${groupedBonds.length} поз.`;
-        const bl = document.getElementById('bonds-list');
-        bl.innerHTML = groupedBonds.length ? '' : '<div class="text-xs text-slate-400 text-center py-12 soft-card col-span-2">Облигации пока не внесены</div>';
-        
-        groupedBonds.forEach((bd, idx) => {
-          const accId = `acc-bond-${idx}`;
-          const isPos = bd.pnl >= 0;
-          const pnlClass = isPos ? 'text-emerald-600' : 'text-rose-600';
-          const pnlSign = isPos ? '+' : '';
-          const couponInfo = formatCouponDate(bd.nextCoupon);
-
-          bl.innerHTML += `
-            <div id="${accId}" class="soft-card overflow-hidden transition cursor-pointer">
-              <div onclick="toggleAccordion('${accId}')" class="p-4 flex justify-between items-center select-none">
-                <div class="flex items-center gap-3">
-                  ${getAssetLogoHtml(bd.name, true)}
-                  <div>
-                    <div class="font-extrabold text-sm text-slate-900 flex items-center gap-1.5">
-                      <span>${bd.name}</span>
-                      <span class="text-[10px] px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 font-semibold">${bd.quantity} шт.</span>
-                    </div>
-                    <div class="text-[11px] text-slate-400 font-medium mt-0.5">Вход: ${formatRub(bd.avgBuyPrice)}</div>
-                  </div>
-                </div>
-
-                <div class="flex items-center gap-3">
-                  <div class="text-right">
-                    <div class="font-extrabold text-sm text-slate-900">${formatRub(bd.curCost)}</div>
-                    <div class="text-xs font-bold text-amber-600">
-                      ${bd.yieldRate.toFixed(1)}% годовых
-                    </div>
-                  </div>
-                  <svg class="w-4 h-4 text-slate-400 accordion-chevron transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </div>
-              </div>
-
-              <div class="accordion-body px-4 pb-4 border-t border-slate-100/80 pt-3">
-                <div class="space-y-3">
-                  <div class="grid grid-cols-2 gap-2 text-xs">
-                    <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                      <div class="text-[10px] text-slate-400 font-semibold">Размер купона</div>
-                      <div class="font-bold text-emerald-600 mt-0.5">+${formatRub(bd.coupon)}</div>
-                      <div class="text-[9px] text-slate-400">${couponInfo ? couponInfo.text : '2 выплаты в год'}</div>
-                    </div>
-                    <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                      <div class="text-[10px] text-slate-400 font-semibold">Дата погашения</div>
-                      <div class="font-bold text-slate-800 mt-0.5">${bd.matDate || 'не указана'}</div>
-                      <div class="text-[9px] text-slate-400">возврат номинала</div>
-                    </div>
-                  </div>
-
-                  <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100 space-y-1.5 text-xs">
-                    <div class="flex justify-between">
-                      <span class="text-slate-500">Годовой доход с позиции:</span>
-                      <span class="font-extrabold text-emerald-600">+${formatRub(bd.yearCouponTotal)}</span>
-                    </div>
-                    <div class="flex justify-between">
-                      <span class="text-slate-500">Текущая биржевая цена (с НКД):</span>
-                      <span class="font-bold text-slate-800">${formatRub(bd.curPrice)}</span>
-                    </div>
-                    <div class="flex justify-between">
-                      <span class="text-slate-500">Курсовой результат:</span>
-                      <span class="font-bold ${pnlClass}">${pnlSign}${formatRub(bd.pnl)} (${pnlSign}${bd.pnlPct.toFixed(1)}%)</span>
-                    </div>
-                  </div>
-
-                  <button onclick="quickBuy('bond', '${bd.name}')" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold shadow-sm transition active:scale-98 flex items-center justify-center gap-1.5">
-                    <span>+ Докупить ${bd.name}</span>
-                  </button>
-                </div>
-              </div>
-            </div>`;
-        });
-
         if (manual) triggerHaptic("success");
 
       } catch (err) {
         console.error("Ошибка загрузки:", err);
       } finally {
         if (icon) icon.classList.remove('animate-spin');
+        // Отключаем скелетон
+        setTimeout(() => {
+          document.getElementById('app-body').classList.remove('is-loading');
+        }, 150);
       }
     }
 
